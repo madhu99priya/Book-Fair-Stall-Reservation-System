@@ -1,7 +1,12 @@
+// Home.jsx
+
 import Navbar from "../components/Navbar";
 import BookScene from "../components/BookScene";
 
+import { useNavigate } from "react-router-dom";
+
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
       {/* Animated Background Grid */}
@@ -166,7 +171,9 @@ export default function Home() {
             <p className="text-gray-300 text-lg mb-8">
               Secure your spot at the future of literary experiences
             </p>
-            <button className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 border border-blue-400/50">
+            <button 
+            onClick={() => navigate("/register")}
+            className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 border border-blue-400/50">
               Join the Experience →
             </button>
             <div className="mt-12 flex justify-center gap-8 text-sm text-gray-500">
