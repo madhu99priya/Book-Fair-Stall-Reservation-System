@@ -46,10 +46,4 @@ public class StallController {
         stallService.deleteStall(id);
         return ResponseEntity.noContent().build();
     }
-
-    // Book a stall (protected — user)
-    @PutMapping("/{id}/book")
-    public ResponseEntity<Stall> bookStall(@PathVariable Long id) {
-        return ResponseEntity.ok(stallService.bookStall(id));
-    }
 }

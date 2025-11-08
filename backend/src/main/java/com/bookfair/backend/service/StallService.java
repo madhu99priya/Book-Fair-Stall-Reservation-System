@@ -47,14 +47,4 @@ public class StallService {
         Stall stall = getStallById(id);
         stallRepository.delete(stall);
     }
-
-    // Book a stall
-    public Stall bookStall(Long id) {
-        Stall stall = getStallById(id);
-        if (stall.isBooked()) {
-            throw new RuntimeException("Stall is already booked");
-        }
-        stall.setBooked(true);
-        return stallRepository.save(stall);
-    }
 }
