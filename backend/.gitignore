@@ -34,3 +34,11 @@ build/
 
 
 src/main/resources/application.properties
+
+/target
+/.idea
+/.classpath
+/.project
+/.settings
+*.iml
+*.log
