@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class ReservationController {
 
     // Create reservation
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'EXHIBITOR')")
     public ResponseEntity<Reservation> createReservation(
             Authentication authentication,
             @RequestParam Long stallId) {
@@ -30,12 +32,14 @@ public class ReservationController {
 
     // Get all reservations
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Reservation>> getAllReservations() {
         return ResponseEntity.ok(reservationService.getAllReservations());
     }
 
     // Get reservations by user
     @GetMapping("/me")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EXHIBITOR')")
     public ResponseEntity<List<Reservation>> getMyReservations(Authentication authentication ) {
         String email = authentication.getName();
         User user = userService.getUserByEmail(email);
@@ -44,6 +48,7 @@ public class ReservationController {
 
     // Cancel reservation
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EXHIBITOR')")
     public ResponseEntity<Void> cancelReservation(
         @PathVariable Long id,
         Authentication authentication) {

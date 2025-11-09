@@ -26,6 +26,10 @@ public class UserService implements UserDetailsService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // Set default role if null
+        if (user.getRole() == null) {
+            user.setRole(User.Role.EXHIBITOR);
+        }
         return userRepository.save(user);
     }
 
@@ -38,8 +42,7 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Invalid email or password");
         }
 
-        UserDetails userDetails = loadUserByUsername(email);
-        return jwtService.generateToken(userDetails);
+        return jwtService.generateToken(user);
     }
 
     // Fetch all users
