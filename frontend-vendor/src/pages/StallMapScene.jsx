@@ -1,25 +1,44 @@
 import { Canvas } from "@react-three/fiber";
-import { useMemo } from "react";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls,Text } from "@react-three/drei";
 
 function Stall({ stall, selected, onSelect }) {
   const sizeMap = {
-    SMALL: [1, 1, 1],
-    MEDIUM: [2, 1, 2],
-    LARGE: [3, 1, 3],
+    SMALL: [2, 1, 2],
+    MEDIUM: [4, 1, 4],
+    LARGE: [6, 1, 4],
+    
   };
 
   const color = stall.booked
     ? "gray"
     : selected
-    ? "lightgreen"
+    ? "red"
     : "green";
 
   return (
-    <mesh position={[stall.x, 0.5, stall.z]} onClick={() => !stall.booked && onSelect(stall)}>
-      <boxGeometry args={sizeMap[stall.size] || [1, 1, 1]} />
-      <meshStandardMaterial color={color} />
-    </mesh>
+    <group position={[stall.x, 0, stall.z]}>
+      {/* Box */}
+      <mesh
+        position={[0, 0.5, 0]}
+        onClick={() => !stall.booked && onSelect(stall)}
+      >
+        <boxGeometry args={sizeMap[stall.size] || [1, 1, 1]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+
+      {/* Stall name label */}
+      <Text
+        position={[0, 1.05, 0]} // slightly above the box
+        rotation={[-Math.PI / 2, 0, 0]}
+        fontSize={0.7}
+        color="black"
+        anchorX="center"
+        anchorY="middle"
+        outlineColor="black"
+      >
+        {stall.name}
+      </Text>
+    </group>
   );
 }
 
@@ -44,7 +63,7 @@ export default function StallMapScene({
 
   return (
     <Canvas
-      camera={{ position: [7, 8, 12], fov: 50 }}
+      camera={{ position: [0, 35, 0], fov: 50 }}
       shadows
       style={{ width: "100%", height: "100%" }}
     >
