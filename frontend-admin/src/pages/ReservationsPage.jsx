@@ -5,22 +5,41 @@ import ReservationTable from '../components/reservations/ReservationTable.jsx';
 import Modal from '../components/common/Modal.jsx';
 
 export default function ReservationsPage() {
-  const { data: reservations = [], isLoading } = useQuery(['reservations'], () =>
-    reservationsService.list()
-  );
   const [activeReservation, setActiveReservation] = useState(null);
+
+  const {
+    data: reservations = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['reservations'],
+    queryFn: () => reservationsService.list(),
+  });
 
   return (
     <div>
       <h1>Reservations</h1>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
+
+      {isLoading && <p>Loading...</p>}
+
+      {isError && (
+        <div style={{ color: 'crimson', marginBottom: '1rem' }}>
+          Failed to load reservations: {error?.message || 'Unknown error'}
+          <button style={{ marginLeft: '0.75rem' }} onClick={() => refetch()}>
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!isLoading && !isError && (
         <ReservationTable
           reservations={reservations}
           onRowClick={(r) => setActiveReservation(r)}
         />
       )}
+
       <Modal
         open={!!activeReservation}
         title={`Reservation #${activeReservation?.id}`}

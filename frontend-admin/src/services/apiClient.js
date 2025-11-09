@@ -1,17 +1,13 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 15000
+  baseURL: '/api', // proxied to backend by Vite
 });
 
-// Optional global interceptor for logging
-apiClient.interceptors.response.use(
-  (res) => res,
-  (error) => {
-    // Could send to monitoring service
-    return Promise.reject(error);
-  }
-);
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('admin_jwt_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 export default apiClient;
