@@ -5,7 +5,6 @@ import com.bookfair.backend.model.Stall;
 import com.bookfair.backend.model.User;
 import com.bookfair.backend.repository.ReservationRepository;
 import com.bookfair.backend.repository.StallRepository;
-import com.bookfair.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +16,11 @@ import java.util.List;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
     private final StallRepository stallRepository;
 
     // Create a new reservation
-    public Reservation createReservation(Long userId, Long stallId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public Reservation createReservation(User user, Long stallId) {
 
         Stall stall = stallRepository.findById(stallId)
                 .orElseThrow(() -> new RuntimeException("Stall not found"));
@@ -50,17 +47,18 @@ public class ReservationService {
     }
 
     // Get reservations by user
-    public List<Reservation> getReservationsByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public List<Reservation> getReservationsByUser(User user) {
         return reservationRepository.findByUser(user);
     }
 
     // Cancel reservation
-    public void cancelReservation(Long reservationId) {
+    public void cancelReservation(Long reservationId, User user) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
-
+        
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("You are not authorized to cancel this reservation");
+        }
         // Free up the stall
         Stall stall = reservation.getStall();
         stall.setBooked(false);
