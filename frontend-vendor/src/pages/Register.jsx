@@ -5,10 +5,9 @@ import { AuthContext } from "../contexts/AuthContext";
 export default function Register() {
   const { register } = useContext(AuthContext);
   const [form, setForm] = useState({
-    username: "",
+    fullname: "",
     email: "",
-    password: "",
-    businessName: "",
+    password: ""
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -47,11 +46,11 @@ export default function Register() {
           </div>
         )}
 
-        <label className="block mb-2 font-semibold">Username</label>
+        <label className="block mb-2 font-semibold">Full Name</label>
         <input
           type="text"
-          name="username"
-          value={form.username}
+          name="fullname"
+          value={form.fullname}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
@@ -62,16 +61,6 @@ export default function Register() {
           type="email"
           name="email"
           value={form.email}
-          onChange={handleChange}
-          className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-
-        <label className="block mb-2 font-semibold">Business Name</label>
-        <input
-          type="text"
-          name="businessName"
-          value={form.businessName}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required

@@ -172,7 +172,7 @@ export default function Home() {
               Secure your spot at the future of literary experiences
             </p>
             <button 
-            onClick={() => navigate("/reservation")}
+            onClick={() => navigate("/register")}
             className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 border border-blue-400/50">
               Join the Experience →
             </button>
