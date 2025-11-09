@@ -1,9 +1,12 @@
 package com.bookfair.backend.controller;
 
+import com.bookfair.backend.model.User;
 import com.bookfair.backend.model.Reservation;
 import com.bookfair.backend.service.ReservationService;
+import com.bookfair.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,14 +17,15 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final UserService userService;
 
     // Create reservation
     @PostMapping
     public ResponseEntity<Reservation> createReservation(
-            @RequestParam Long userId,
+            Authentication authentication,
             @RequestParam Long stallId) {
-
-        return ResponseEntity.ok(reservationService.createReservation(userId, stallId));
+        User user = userService.getUserByEmail(authentication.getName());
+        return ResponseEntity.ok(reservationService.createReservation(user, stallId));
     }
 
     // Get all reservations
@@ -31,15 +35,21 @@ public class ReservationController {
     }
 
     // Get reservations by user
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Reservation>> getReservationsByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(reservationService.getReservationsByUser(userId));
+    @GetMapping("/me")
+    public ResponseEntity<List<Reservation>> getMyReservations(Authentication authentication ) {
+        String email = authentication.getName();
+        User user = userService.getUserByEmail(email);
+        return ResponseEntity.ok(reservationService.getReservationsByUser(user));
     }
 
     // Cancel reservation
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancelReservation(@PathVariable Long id) {
-        reservationService.cancelReservation(id);
+    public ResponseEntity<Void> cancelReservation(
+        @PathVariable Long id,
+        Authentication authentication) {
+        String email = authentication.getName();
+        User user = userService.getUserByEmail(email);
+        reservationService.cancelReservation(id, user);
         return ResponseEntity.noContent().build();
     }
 }
