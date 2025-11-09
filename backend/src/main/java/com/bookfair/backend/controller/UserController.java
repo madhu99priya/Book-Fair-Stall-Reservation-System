@@ -4,6 +4,8 @@ import com.bookfair.backend.model.User;
 import com.bookfair.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -15,25 +17,46 @@ public class UserController {
 
     private final UserService userService;
 
+    // User registration
     @PostMapping("/register")
     public User registerUser(@RequestBody User user) {
         return userService.registerUser(user);
     }
-
+    
+    // User login
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
         String token = userService.login(request.email(), request.password());
         return new LoginResponse(token);
     }
-
+    
+    // Get all users
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
+    // Get user by ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
+    }
+
+    // Get current authenticated user
+    @GetMapping("/me")
+    public User getCurrentUser(Authentication authentication) {
+        String email = authentication.getName();
+        User user = userService.getUserByEmail(email);
+        return user;
+    }
+
+    // Delete user by ID
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
     
     // DTOs

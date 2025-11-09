@@ -49,12 +49,19 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-
+    
+    // Fetch user by ID
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    // Delete user
+    public void deleteUser(Long id) {
+        User user = getUserById(id);
+        userRepository.delete(user);
+    }
+    
     // Implement UserDetailsService for JWT auth
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
