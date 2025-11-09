@@ -1,4 +1,7 @@
-import { useState, useEffect } from "react";
+// Navbar.jsx
+
+import { useState } from "react";
+import { Link as ScrollLink } from "react-scroll"; // 👈 import from react-scroll
 import { Menu, X, BookOpen } from "lucide-react";
 
 export default function Navbar() {

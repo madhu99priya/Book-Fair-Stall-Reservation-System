@@ -1,0 +1,35 @@
+.stall-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 6px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+.stall-cell {
+  background: #e0f2fe;
+  border: 1px solid #93c5fd;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+}
+.stall-cell.reserved {
+  background: #d1d5db;
+  border-color: #9ca3af;
+  color: #6b7280;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+.stall-cell.selected {
+  outline: 3px solid #2563eb;
+}
+.stall-cell:hover:not(.reserved) {
+  background: #bae6fd;
+}
