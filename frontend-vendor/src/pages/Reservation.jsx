@@ -16,7 +16,7 @@ export default function Reservation() {
 
   // Fetch stalls
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate("/login");
       return;
     }
@@ -41,6 +41,11 @@ export default function Reservation() {
     if (selectedStalls.length === 0)
       return alert("Select at least one stall to reserve.");
 
+    const confirmed = window.confirm(
+      "Are you sure you want to confirm the stall reservation?"
+    );
+    if (!confirmed) return; 
+    
     try {
       const stallIds = selectedStalls.map((s) => s.id);
       const res = await axios.post("http://localhost:8081/api/reservations", { stallIds });
@@ -48,7 +53,7 @@ export default function Reservation() {
       // Assuming backend returns { qrCodeUrl, reserved: [{id, name, size}] }
       setConfirmation({
         //qrCodeUrl: res.data.qrCodeUrl,
-        reservedStalls: res.data.reserved,
+        reservedStalls: res.data.reservedStalls,
       });
 
       // Fetch latest stalls from backend

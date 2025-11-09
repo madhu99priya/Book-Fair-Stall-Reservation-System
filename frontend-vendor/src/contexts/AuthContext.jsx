@@ -1,5 +1,5 @@
 // src/contexts/AuthContext.jsx
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
@@ -8,6 +8,36 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [loading, setLoading] = useState(true);
+
+  // Fetch user if token exists
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:8081/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch user");
+
+        const userData = await res.json();
+        setUser(userData);
+      } catch (err) {
+        console.error("❌ Failed to fetch user on app load:", err);
+        setToken("");
+        localStorage.removeItem("token");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [token]);
 
   // login function
   const login = async (email, password) => {

@@ -2,6 +2,7 @@ package com.bookfair.backend.controller;
 
 import com.bookfair.backend.model.User;
 import com.bookfair.backend.model.Reservation;
+import com.bookfair.backend.model.Stall;
 import com.bookfair.backend.service.ReservationService;
 import com.bookfair.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -25,17 +27,32 @@ public class ReservationController {
     // Create reservation
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'EXHIBITOR')")
-    public ResponseEntity<List<Reservation>> createReservation(
+    public ResponseEntity<Map<String, Object>> createReservation(
             Authentication authentication,
-            @RequestBody Map<String, List<Long>> body) { // {"stallIds":[1,2,3]}
+            @RequestBody Map<String, List<Long>> body // expects {"stallIds":[1,2,3]}
+    ) {
         List<Long> stallIds = body.get("stallIds");
         User user = userService.getUserByEmail(authentication.getName());
 
+        // Create reservations for each stall
         List<Reservation> reservations = stallIds.stream()
                 .map(id -> reservationService.createReservation(user, id))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(reservations);
+        // Extract reserved stalls
+        List<Stall> reservedStalls = reservations.stream()
+                .map(Reservation::getStall)
+                .collect(Collectors.toList());
+
+        // Generate QR code (assuming each reservation has the same QR code for simplicity)
+        //String qrCodeUrl = reservations.get(0).getQrCodeUrl(); 
+
+        // Prepare response
+        Map<String, Object> response = new HashMap<>();
+        //response.put("qrCodeUrl", qrCodeUrl);
+        response.put("reservedStalls", reservedStalls);
+
+        return ResponseEntity.ok(response);
     }
 
 
