@@ -18,12 +18,20 @@ public class Stall {
     @NonNull
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Size size; // SMALL, MEDIUM, LARGE
+
     @NonNull
-    private String location;
+    private Double price;
 
     @Builder.Default
     private boolean booked = false; // Default value for @Builder
 
-    @NonNull
-    private Double price;
+    public enum Size {
+        SMALL, MEDIUM, LARGE
+    }
+
+    private Double x;
+    private Double z;
 }

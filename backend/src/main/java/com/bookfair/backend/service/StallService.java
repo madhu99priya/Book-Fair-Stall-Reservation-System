@@ -36,7 +36,6 @@ public class StallService {
     public Stall updateStall(Long id, Stall updatedStall) {
         Stall stall = getStallById(id);
         stall.setName(updatedStall.getName());
-        stall.setLocation(updatedStall.getLocation());
         stall.setPrice(updatedStall.getPrice());
         stall.setBooked(updatedStall.isBooked());
         return stallRepository.save(stall);

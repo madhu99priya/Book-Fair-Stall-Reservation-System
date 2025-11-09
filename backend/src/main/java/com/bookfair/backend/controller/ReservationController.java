@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -23,12 +25,19 @@ public class ReservationController {
     // Create reservation
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'EXHIBITOR')")
-    public ResponseEntity<Reservation> createReservation(
+    public ResponseEntity<List<Reservation>> createReservation(
             Authentication authentication,
-            @RequestParam Long stallId) {
+            @RequestBody Map<String, List<Long>> body) { // {"stallIds":[1,2,3]}
+        List<Long> stallIds = body.get("stallIds");
         User user = userService.getUserByEmail(authentication.getName());
-        return ResponseEntity.ok(reservationService.createReservation(user, stallId));
+
+        List<Reservation> reservations = stallIds.stream()
+                .map(id -> reservationService.createReservation(user, id))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(reservations);
     }
+
 
     // Get all reservations
     @GetMapping

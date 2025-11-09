@@ -1,17 +1,24 @@
 import { Canvas } from "@react-three/fiber";
-import { useState } from "react";
+import { useMemo } from "react";
 import { OrbitControls } from "@react-three/drei";
 
 function Stall({ stall, selected, onSelect }) {
+  const sizeMap = {
+    SMALL: [1, 1, 1],
+    MEDIUM: [2, 1, 2],
+    LARGE: [3, 1, 3],
+  };
+
+  const color = stall.booked
+    ? "gray"
+    : selected
+    ? "lightgreen"
+    : "green";
+
   return (
-    <mesh
-      position={[stall.x, 0.5, stall.z]}
-      onClick={() => !stall.reserved && onSelect(stall)}
-    >
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial
-        color={stall.reserved ? "gray" : selected ? "lightgreen" : "green"}
-      />
+    <mesh position={[stall.x, 0.5, stall.z]} onClick={() => !stall.booked && onSelect(stall)}>
+      <boxGeometry args={sizeMap[stall.size] || [1, 1, 1]} />
+      <meshStandardMaterial color={color} />
     </mesh>
   );
 }
@@ -37,7 +44,7 @@ export default function StallMapScene({
 
   return (
     <Canvas
-      camera={{ position: [5, 8, 10], fov: 50 }}
+      camera={{ position: [7, 8, 12], fov: 50 }}
       shadows
       style={{ width: "100%", height: "100%" }}
     >
@@ -49,7 +56,8 @@ export default function StallMapScene({
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
-      {stalls.map((stall) => (
+
+      {stalls.map((stall, i) => (
         <Stall
           key={stall.id}
           stall={stall}
@@ -57,8 +65,9 @@ export default function StallMapScene({
           onSelect={handleSelect}
         />
       ))}
+
       <OrbitControls enableZoom={true} />
-      <gridHelper args={[20, 20]} />
+      <gridHelper args={[30, 30]} />
     </Canvas>
   );
 }

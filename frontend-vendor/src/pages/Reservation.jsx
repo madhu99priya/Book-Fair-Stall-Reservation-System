@@ -1,10 +1,9 @@
 // Reservation.jsx
-
 import { useEffect, useState, useContext } from "react";
-import StallMapScene from "../pages/StallMapScene";
-import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import axios from "../api/api"; // Axios wrapper with JWT
+import { AuthContext } from "../contexts/AuthContext";
+import axios from "../api/api";
+import StallMapScene from "./StallMapScene";
 
 export default function Reservation() {
   const { user } = useContext(AuthContext);
@@ -13,9 +12,9 @@ export default function Reservation() {
   const [stalls, setStalls] = useState([]);
   const [selectedStalls, setSelectedStalls] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [confirmation, setConfirmation] = useState(null); // {qrCodeUrl, reservedStalls}
+  const [confirmation, setConfirmation] = useState(null);
 
-  // Fetch stalls from backend
+  // Fetch stalls
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -25,10 +24,10 @@ export default function Reservation() {
     const fetchStalls = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("/api/v1/stalls");
-        setStalls(res.data);
+        const res = await axios.get("http://localhost:8081/api/stalls");
+        setStalls(res.data); // Expecting array of stalls: [{id, name, size, x, z, reserved}, ...]
       } catch (err) {
-        console.error("Failed to fetch stalls", err);
+        console.error("❌ Failed to fetch stalls", err);
       } finally {
         setLoading(false);
       }
@@ -37,41 +36,40 @@ export default function Reservation() {
     fetchStalls();
   }, [user, navigate]);
 
+  // Confirm reservation
   const handleConfirmReservation = async () => {
-    if (selectedStalls.length === 0) return alert("Select at least one stall!");
+    if (selectedStalls.length === 0)
+      return alert("Select at least one stall to reserve.");
+
     try {
-      const res = await axios.post("/api/v1/reservations", {
-        stalls: selectedStalls.map((s) => s.id),
-      });
+      const stallIds = selectedStalls.map((s) => s.id);
+      const res = await axios.post("http://localhost:8081/api/reservations", { stallIds });
 
+      // Assuming backend returns { qrCodeUrl, reserved: [{id, name, size}] }
       setConfirmation({
-        qrCodeUrl: res.data.qrCodeUrl,
-        reservedStalls: selectedStalls,
+        //qrCodeUrl: res.data.qrCodeUrl,
+        reservedStalls: res.data.reserved,
       });
 
-      // Update stalls to reflect reservation
-      setStalls((prev) =>
-        prev.map((s) =>
-          selectedStalls.find((sel) => sel.id === s.id)
-            ? { ...s, reserved: true }
-            : s
-        )
-      );
+      // Fetch latest stalls from backend
+      const stallsRes = await axios.get("/api/stalls");
+      setStalls(stallsRes.data);
 
-      // Clear selection
+      // Clear current selection
       setSelectedStalls([]);
     } catch (err) {
-      console.error("Reservation failed", err);
+      console.error("❌ Reservation failed:", err);
       alert("Reservation failed. Please try again.");
     }
   };
 
-  if (loading) return <div className="text-white p-8">Loading stalls...</div>;
+  if (loading)
+    return <div className="text-white text-center p-8">Loading stalls...</div>;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-8">
-      <h1 className="text-4xl font-bold mb-6">Reserve Your Stall</h1>
-      <p className="text-gray-300 mb-4">
+      <h1 className="text-4xl font-bold mb-4">Reserve Your Stall</h1>
+      <p className="text-gray-300 mb-6 text-center">
         Select up to 3 stalls for your business.
       </p>
 
@@ -103,23 +101,23 @@ export default function Reservation() {
       {confirmation && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <div className="bg-gray-800 rounded-xl p-8 w-96 flex flex-col items-center">
-            <h2 className="text-2xl font-bold mb-4">Reservation Confirmed!</h2>
-            <p className="mb-4">Your reserved stalls:</p>
+            <h2 className="text-2xl font-bold mb-4 text-green-400">
+              Reservation Confirmed!
+            </h2>
+            <p className="mb-2">Your reserved stalls:</p>
             <ul className="mb-4 space-y-1">
-              {confirmation.reservedStalls.map((s) => (
+              {confirmation?.reservedStalls?.map((s) => (
                 <li key={s.id} className="text-green-400">
                   {s.name} ({s.size})
                 </li>
               ))}
             </ul>
-            <div className="mb-4">
-              <p className="mb-2">Your QR Pass:</p>
-              <img
-                src={confirmation.qrCodeUrl}
-                alt="QR Code"
-                className="w-48 h-48"
-              />
-            </div>
+            <p className="mb-2">Your QR Pass:</p>
+            <img
+              src={confirmation.qrCodeUrl}
+              alt="QR Code"
+              className="w-48 h-48 mb-4 border border-gray-600"
+            />
             <a
               href={confirmation.qrCodeUrl}
               download="QR_Pass.png"
