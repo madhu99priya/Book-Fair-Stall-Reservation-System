@@ -1,71 +1,70 @@
-// src/context/AuthContext.jsx
-import { createContext, useState, useEffect } from "react";
-import api from "../api/api";
+// src/contexts/AuthContext.jsx
+import { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null); // {username, roles, ...}
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  // Check token on mount
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      fetchProfile();
-    } else {
-      setLoading(false);
-    }
-  }, []);
+  // login function
+  const login = async (email, password) => {
+    const res = await fetch("http://localhost:8081/api/users/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const fetchProfile = async () => {
-    try {
-      const res = await api.get("/auth/profile"); // backend endpoint to get user info
-      setUser(res.data);
-    } catch (err) {
-      console.error("Failed to fetch profile", err);
-      logout();
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      throw new Error("Login failed");
     }
+
+    const data = await res.json(); // backend returns { token: "..." }
+    setToken(data.token);
+    localStorage.setItem("token", data.token);
+
+    // Fetch current user
+    const userRes = await fetch("http://localhost:8081/api/users/me", {
+      headers: { Authorization: `Bearer ${data.token}` },
+    });
+
+    const userData = await userRes.json();
+    setUser(userData);
+
+    navigate("/reservation"); // redirect after login
   };
 
-  const login = async (username, password) => {
-    try {
-      const res = await api.post("/auth/login", { username, password });
-      const { token } = res.data;
-      localStorage.setItem("token", token);
-      await fetchProfile();
-      navigate("/reservation"); // redirect after login
-    } catch (err) {
-      console.error("Login failed", err);
-      throw err;
+  // register function
+  const register = async (form) => {
+    const res = await fetch("http://localhost:8081/api/users/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        fullName: form.fullname,
+        email: form.email, 
+        password: form.password
+      }),
+    });
+    
+    navigate("/login");
+    if (!res.ok) {
+      throw new Error("Registration failed");
     }
-  };
+  }
 
-  const register = async (data) => {
-    try {
-      await api.post("/auth/register", data); // data: {username, email, password, businessName...}
-      navigate("/login");
-    } catch (err) {
-      console.error("Registration failed", err);
-      throw err;
-    }
-  };
-
+  // logout function
   const logout = () => {
-    localStorage.removeItem("token");
+    setToken("");
     setUser(null);
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, login, register, logout, loading }}
-    >
+    <AuthContext.Provider value={{ user, token, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}

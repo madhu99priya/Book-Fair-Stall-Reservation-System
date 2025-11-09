@@ -27,7 +27,8 @@ public class UserController {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
         String token = userService.login(request.email(), request.password());
-        return new LoginResponse(token);
+        User user = userService.getUserByEmail(request.email());
+        return new LoginResponse(token, user);
     }
     
     // Get all users
@@ -61,5 +62,5 @@ public class UserController {
     
     // DTOs
     record LoginRequest(String email, String password) {}
-    record LoginResponse(String token) {}
+    record LoginResponse(String token, User user) {}
 }
