@@ -16,3 +16,20 @@
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
 }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px; /* Offset for fixed navbar */
+}
+
+/* Optional: Custom smooth scroll for specific browsers */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Smooth transitions for all elements */
+* {
+  scroll-margin-top: 100px;
+}
