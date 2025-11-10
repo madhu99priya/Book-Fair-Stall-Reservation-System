@@ -4,6 +4,7 @@ import com.bookfair.backend.model.User;
 import com.bookfair.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 
@@ -59,8 +60,32 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
+    // Update current user
+    @PutMapping("/me")
+    @PreAuthorize("hasAnyRole('ADMIN','EXHIBITOR')")
+    public User updateCurrentUser(@RequestBody User updatedData, Authentication authentication) {
+        User currentUser = userService.getUserByEmail(authentication.getName());
+        updatedData.setId(currentUser.getId());  // ensure the correct user is updated
+        return userService.updateUser(updatedData);
+    }
+
+    // Optional: Admin can update any user
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public User updateUserByAdmin(@PathVariable Long id, @RequestBody User updatedData) {
+        updatedData.setId(id);
+        return userService.updateUser(updatedData);
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody PasswordChangeRequest request, Authentication auth) {
+        userService.changePassword(auth.getName(), request.oldPassword(), request.newPassword());
+        return ResponseEntity.ok().build();
+    }
     
     // DTOs
     record LoginRequest(String email, String password) {}
     record LoginResponse(String token, User user) {}
+    record PasswordChangeRequest(String oldPassword, String newPassword) {}
 }

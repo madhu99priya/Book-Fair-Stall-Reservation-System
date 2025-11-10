@@ -3,6 +3,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
+import Navbarauth from "../components/Navbarauth";
 import axios from "../api/api";
 import StallMapScene from "./StallMapScene";
 
@@ -72,7 +73,8 @@ export default function Reservation() {
     return <div className="text-white text-center p-8">Loading stalls...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-8">
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-8 pt-24">
+      <Navbarauth />
       <h1 className="text-4xl font-bold mb-4">Reserve Your Stall</h1>
       <p className="text-gray-300 mb-6 text-center">
         Select up to 3 stalls for your business.
