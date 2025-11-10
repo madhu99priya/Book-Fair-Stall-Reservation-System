@@ -62,6 +62,33 @@ public class UserService implements UserDetailsService {
         userRepository.delete(user);
     }
     
+    // Update user
+    public User updateUser(User updatedUser) {
+        User user = userRepository.findById(updatedUser.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (updatedUser.getFullName() != null) user.setFullName(updatedUser.getFullName());
+        if (updatedUser.getEmail() != null) user.setEmail(updatedUser.getEmail());
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
+        return userRepository.save(user);
+    }
+
+    public void changePassword(String email, String oldPassword, String newPassword) {
+        User user = getUserByEmail(email); // fetch user by email
+
+        // Check if old password matches
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+
+        // Encode and update new password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+    
     // Implement UserDetailsService for JWT auth
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
