@@ -1,68 +1,108 @@
+import { useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import EventCarousel from "../components/EventCarousel";
 import AboutCarousel from "../components/AboutCarousel";
-
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    // Ensure video plays on component mount
+    if (videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.log("Auto-play prevented:", error);
+      });
+    }
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
-      {/* Background matching EventCarousel */}
-      <div className="fixed inset-0 z-0">
+      {/* Background for all sections */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/50 to-black"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.15)_0%,transparent_70%)]"></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
       </div>
 
-      <Navbar />
+      {/* Navbar - Fixed with high z-index */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </div>
 
-      <main className="relative z-10">
-        {/* HOME SECTION */}
+      <main className="relative">
+        {/* HOME SECTION - WITH HERO VIDEO */}
         <section
           id="home"
-          className="min-h-screen flex flex-col md:flex-row items-center justify-center text-center md:text-left px-8 gap-8 pt-20"
+          className="min-h-screen relative flex items-center justify-center overflow-hidden pb-32 md:pb-48"
         >
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-black/80 via-cyan-950/40 to-black/80 p-10 rounded-3xl shadow-[0_0_60px_rgba(6,182,212,0.4)] backdrop-blur-2xl border border-cyan-500/30 relative overflow-hidden group hover:border-cyan-400/60 transition-all duration-500">
-            {/* Holographic Effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-cyan-500/10 rounded-full blur-3xl group-hover:animate-pulse"></div>
+          {/* Video Background - Lower z-index */}
+          <div className="absolute inset-0 z-0">
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster="/videos/hero-thumbnail.jpg"
+            >
+              <source src="/videos/hero-video.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
 
-            {/* Corner Accents */}
-            <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-cyan-400/50"></div>
-            <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-cyan-400/50"></div>
+          {/* Very Light Dark Overlay - Video more visible */}
+          <div className="absolute inset-0 bg-black/60 z-[1]"></div>
 
-            <div className="relative z-10">
-              {/* Animated Dots */}
-              <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-75"></div>
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
-              </div>
+          {/* Gradient Overlay that fades to transparent at bottom */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-[2]"></div>
 
-              <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-6 drop-shadow-2xl animate-[gradient_8s_ease_infinite] bg-[length:200%_auto]">
-                Colombo International Book Fair 2025
-              </h1>
+          {/* Content over video - Higher z-index */}
+          <div className="relative z-10 max-w-4xl mx-auto px-8 mt-8 text-center pt-24 pb-16">
+            <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-6 drop-shadow-[0_0_30px_rgba(6,182,212,0.9)] leading-tight">
+              Colombo International Book Fair 2025
+            </h1>
 
-              <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 mb-8 rounded-full mx-auto md:mx-0 shadow-[0_0_15px_rgba(6,182,212,0.6)]"></div>
+            <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 mb-8 rounded-full mx-auto shadow-[0_0_20px_rgba(6,182,212,0.8)]"></div>
 
-              <p className="text-xl text-gray-300 max-w-3xl mb-8 leading-relaxed">
-                <span className="text-cyan-400 font-semibold">
-                  Step into the future of reading.
-                </span>{" "}
-                Where technology meets literature in an immersive digital
-                experience that transcends boundaries.
-              </p>
+            <p className="text-xl md:text-2xl text-white max-w-3xl mb-8 leading-relaxed mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+              <span className="text-cyan-300 font-semibold drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]">
+                Step into the future of reading.
+              </span>{" "}
+              Where technology meets literature in an immersive digital
+              experience that transcends boundaries.
+            </p>
 
-              <div className="flex flex-wrap gap-3 justify-center md:justify-start text-sm">
-                <span className="px-4 py-2 bg-cyan-500/20 rounded-full border border-cyan-500/40 text-cyan-300 font-mono shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all duration-300">
-                  06th December to 15th December 2025
-                </span>
-                <span className="px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/40 text-blue-300 font-mono shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] transition-all duration-300">
-                  Bandaranaike Memorial International Conference Hall – BMICH.
-                </span>
-              </div>
+            <div className="flex flex-wrap gap-3 justify-center text-sm mb-10">
+              <span className="px-6 py-3 bg-cyan-500/40 backdrop-blur-md rounded-full border border-cyan-400/60 text-white font-mono shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:shadow-[0_0_35px_rgba(6,182,212,0.7)] transition-all duration-300">
+                06th December to 15th December 2025
+              </span>
+              <span className="px-6 py-3 bg-blue-500/40 backdrop-blur-md rounded-full border border-blue-400/60 text-white font-mono shadow-[0_0_25px_rgba(59,130,246,0.5)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] transition-all duration-300">
+                Bandaranaike Memorial International Conference Hall – BMICH.
+              </span>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex gap-4 justify-center flex-wrap">
+              <button
+                onClick={() => navigate("/reservation")}
+                className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 px-8 py-4 rounded-lg text-lg font-bold transition-all transform hover:scale-105 shadow-[0_0_35px_rgba(6,182,212,0.6)] hover:shadow-[0_0_45px_rgba(6,182,212,0.8)]"
+              >
+                Reserve Your Stall
+              </button>
+              <button
+                onClick={() =>
+                  document
+                    .getElementById("about")
+                    .scrollIntoView({ behavior: "smooth" })
+                }
+                className="bg-white/10 border-2 border-white/80 hover:bg-white/20 hover:border-white backdrop-blur-md px-8 py-4 rounded-lg text-lg font-bold transition-all hover:shadow-[0_0_25px_rgba(255,255,255,0.5)]"
+              >
+                Learn More
+              </button>
             </div>
           </div>
         </section>
@@ -70,11 +110,11 @@ export default function Home() {
         {/* ABOUT SECTION */}
         <section
           id="about"
-          className="min-h-screen flex flex-col items-center justify-center text-center px-8 gap-8"
+          className="min-h-screen flex flex-col items-center justify-center text-center px-8 gap-8 relative z-10 pt-32 md:pt-48"
         >
-          <div className="max-w-5xl mx-auto bg-gradient-to-br from-black/80 via-blue-950/40 to-black/80 p-10 md:p-16 rounded-3xl shadow-[0_0_60px_rgba(59,130,246,0.4)] backdrop-blur-2xl border border-blue-500/30 relative overflow-visible group hover:border-blue-400/60 transition-all duration-500">
+          <div className="max-w-5xl mx-auto bg-gradient-to-br from-black/80 via-blue-950/40 to-black/80 p-10 md:p-16 rounded-3xl shadow-[0_0_60px_rgba(59,130,246,0.4)] backdrop-blur-2xl border border-blue-500/30 group">
             {/* Holographic Effect */}
-            <div className="absolute inset-0 bg-gradient-to-bl from-blue-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute inset-0 bg-gradient-to-bl from-blue-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
             <div className="absolute -bottom-1/2 -left-1/2 w-full h-full bg-blue-500/10 rounded-full blur-3xl group-hover:animate-pulse"></div>
 
             <div className="relative z-10">
@@ -122,14 +162,14 @@ export default function Home() {
         </section>
 
         {/* EVENTS SECTION */}
-        <section id="events" className="mt-20">
+        <section id="events" className="mt-20 relative z-10">
           <EventCarousel />
         </section>
 
         {/* REGISTRATION SECTION */}
         <section
           id="registration"
-          className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative"
+          className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative z-10"
         >
           <div className="relative z-10 max-w-2xl">
             <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-8">
@@ -140,7 +180,7 @@ export default function Home() {
             </p>
             <button
               onClick={() => navigate("/login")}
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 border border-blue-400/50"
+              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300"
             >
               Join the Experience →
             </button>
@@ -160,7 +200,7 @@ export default function Home() {
         {/* CONTACT SECTION */}
         <section
           id="contact"
-          className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative"
+          className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative z-10"
         >
           <div className="relative z-10 max-w-2xl">
             <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-8">
