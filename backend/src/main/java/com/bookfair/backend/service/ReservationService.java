@@ -16,7 +16,6 @@ import java.util.List;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    //private final UserRepository userRepository;
     private final StallRepository stallRepository;
 
     // Create a new reservation

@@ -1,3 +1,5 @@
+// SecurityConfig.java
+
 package com.bookfair.backend.config;
 
 import com.bookfair.backend.service.CustomUserDetailsService;

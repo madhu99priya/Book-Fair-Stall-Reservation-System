@@ -1,4 +1,5 @@
 // Reservation.jsx
+
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
@@ -50,13 +51,12 @@ export default function Reservation() {
       const stallIds = selectedStalls.map((s) => s.id);
       const res = await axios.post("http://localhost:8081/api/reservations", { stallIds });
 
-      // Assuming backend returns { qrCodeUrl, reserved: [{id, name, size}] }
       setConfirmation({
-        //qrCodeUrl: res.data.qrCodeUrl,
         reservedStalls: res.data.reservedStalls,
+        qrCodeBase64: res.data.qrCodeBase64,
       });
 
-      // Fetch latest stalls from backend
+      // Refresh stalls
       const stallsRes = await axios.get("/api/stalls");
       setStalls(stallsRes.data);
 
@@ -119,12 +119,12 @@ export default function Reservation() {
             </ul>
             <p className="mb-2">Your QR Pass:</p>
             <img
-              src={confirmation.qrCodeUrl}
+              src={confirmation.qrCodeBase64}
               alt="QR Code"
               className="w-48 h-48 mb-4 border border-gray-600"
             />
             <a
-              href={confirmation.qrCodeUrl}
+              href={confirmation.qrCodeBase64}
               download="QR_Pass.png"
               className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-bold mb-2"
             >
