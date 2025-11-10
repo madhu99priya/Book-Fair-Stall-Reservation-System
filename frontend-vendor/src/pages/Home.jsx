@@ -1,7 +1,6 @@
-// Home.jsx
-
 import Navbar from "../components/Navbar";
 import EventCarousel from "../components/EventCarousel";
+import AboutCarousel from "../components/AboutCarousel";
 
 import { useNavigate } from "react-router-dom";
 
@@ -58,13 +57,10 @@ export default function Home() {
 
               <div className="flex flex-wrap gap-3 justify-center md:justify-start text-sm">
                 <span className="px-4 py-2 bg-cyan-500/20 rounded-full border border-cyan-500/40 text-cyan-300 font-mono shadow-[0_0_15px_rgba(6,182,212,0.2)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all duration-300">
-                  NEXT-GEN
+                  06th December to 15th December 2025
                 </span>
                 <span className="px-4 py-2 bg-blue-500/20 rounded-full border border-blue-500/40 text-blue-300 font-mono shadow-[0_0_15px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] transition-all duration-300">
-                  INTERACTIVE
-                </span>
-                <span className="px-4 py-2 bg-purple-500/20 rounded-full border border-purple-500/40 text-purple-300 font-mono shadow-[0_0_15px_rgba(168,85,247,0.2)] hover:shadow-[0_0_25px_rgba(168,85,247,0.4)] transition-all duration-300">
-                  IMMERSIVE
+                  Bandaranaike Memorial International Conference Hall – BMICH.
                 </span>
               </div>
             </div>
@@ -76,7 +72,7 @@ export default function Home() {
           id="about"
           className="min-h-screen flex flex-col items-center justify-center text-center px-8 gap-8"
         >
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-black/80 via-blue-950/40 to-black/80 p-10 rounded-3xl shadow-[0_0_60px_rgba(59,130,246,0.4)] backdrop-blur-2xl border border-blue-500/30 relative overflow-hidden group hover:border-blue-400/60 transition-all duration-500">
+          <div className="max-w-5xl mx-auto bg-gradient-to-br from-black/80 via-blue-950/40 to-black/80 p-10 md:p-16 rounded-3xl shadow-[0_0_60px_rgba(59,130,246,0.4)] backdrop-blur-2xl border border-blue-500/30 relative overflow-visible group hover:border-blue-400/60 transition-all duration-500">
             {/* Holographic Effect */}
             <div className="absolute inset-0 bg-gradient-to-bl from-blue-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="absolute -bottom-1/2 -left-1/2 w-full h-full bg-blue-500/10 rounded-full blur-3xl group-hover:animate-pulse"></div>
@@ -91,15 +87,11 @@ export default function Home() {
               </div>
 
               <div className="h-1 w-32 bg-gradient-to-r from-blue-500 to-cyan-500 mb-8 rounded-full mx-auto shadow-[0_0_15px_rgba(59,130,246,0.6)]"></div>
-
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10">
-                The Colombo International Book Fair celebrates authors,
-                publishers, and readers - bringing the magic of words to life
-                through cutting-edge experiences and digital innovation.
-              </p>
-
+              <div>
+                <AboutCarousel />
+              </div>
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8 mt-12">
                 <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/5 p-6 rounded-xl border border-blue-500/30 backdrop-blur-sm hover:border-blue-400/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300">
                   <div className="text-4xl font-black text-blue-400 mb-2">
                     50+
@@ -130,7 +122,7 @@ export default function Home() {
         </section>
 
         {/* EVENTS SECTION */}
-        <section id="events">
+        <section id="events" className="mt-20">
           <EventCarousel />
         </section>
 
@@ -146,9 +138,10 @@ export default function Home() {
             <p className="text-gray-300 text-xl mb-10">
               Secure your spot at the future of literary experiences
             </p>
-            <button 
-            onClick={() => navigate("/login")}
-            className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 border border-blue-400/50">
+            <button
+              onClick={() => navigate("/login")}
+              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 border border-blue-400/50"
+            >
               Join the Experience →
             </button>
             <div className="mt-12 flex justify-center gap-8 text-sm text-gray-400">
