@@ -26,7 +26,37 @@ export default function Navbar() {
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      const navbarHeight = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - navbarHeight;
+
+      // Custom smooth scroll with easing
+      const startPosition = window.pageYOffset;
+      const distance = offsetPosition - startPosition;
+      const duration = 800; // 800ms for smooth animation
+      let start = null;
+
+      const easeInOutCubic = (t) => {
+        return t < 0.5
+          ? 4 * t * t * t
+          : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+      };
+
+      const animation = (currentTime) => {
+        if (start === null) start = currentTime;
+        const timeElapsed = currentTime - start;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+
+        window.scrollTo(0, startPosition + distance * ease);
+
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        }
+      };
+
+      requestAnimationFrame(animation);
       setIsOpen(false);
     }
   };
@@ -116,14 +146,14 @@ export default function Navbar() {
           ></div>
 
           {/* Mobile Menu Panel */}
-          <nav className="fixed top-24 left-4 right-4 z-50 md:hidden bg-gradient-to-br from-black/95 via-cyan-950/40 to-black/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl shadow-[0_0_40px_rgba(6,182,212,0.4)] overflow-hidden">
+          <nav className="fixed top-24 left-4 right-4 z-50 md:hidden bg-gradient-to-br from-black/95 via-cyan-950/40 to-black/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl shadow-[0_0_60px_rgba(6,182,212,0.3)]">
             <div className="p-6 space-y-3">
               {["home", "about", "events", "registration", "contact"].map(
                 (id) => (
                   <button
                     key={id}
                     onClick={() => scrollToSection(id)}
-                    className="block w-full text-left px-6 py-4 rounded-xl bg-black/40 hover:bg-cyan-500/20 text-cyan-300 font-medium hover:text-cyan-100 border border-cyan-500/20 hover:border-cyan-400/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:translate-x-1"
+                    className="block w-full text-left px-6 py-4 rounded-xl bg-black/40 hover:bg-cyan-500/20 text-cyan-300 font-medium hover:text-cyan-100 border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 shadow-lg hover:shadow-cyan-500/20"
                   >
                     {id.charAt(0).toUpperCase() + id.slice(1)}
                   </button>
