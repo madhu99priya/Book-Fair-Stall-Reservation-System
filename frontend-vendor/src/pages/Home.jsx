@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import EventCarousel from "../components/EventCarousel";
 import AboutCarousel from "../components/AboutCarousel";
 import { useNavigate } from "react-router-dom";
+import CinemaModal from "../components/CinemaModal";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -18,215 +19,227 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
-      {/* Background for all sections */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/50 to-black"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.15)_0%,transparent_70%)]"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-      </div>
+    <>
+      {/* Cinema Modal - Shows EVERY time on this page */}
+      <CinemaModal />
 
-      {/* Navbar - Fixed with high z-index */}
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <Navbar />
-      </div>
+      {/* Main Content */}
+      <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
+        {/* Background for all sections */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/50 to-black"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.15)_0%,transparent_70%)]"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+        </div>
 
-      <main className="relative">
-        {/* HOME SECTION - WITH HERO VIDEO */}
-        <section
-          id="home"
-          className="min-h-screen relative flex items-center justify-center overflow-hidden pb-32 md:pb-48"
-        >
-          {/* Video Background - Lower z-index */}
-          <div className="absolute inset-0 z-0">
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster="/videos/hero-thumbnail.jpg"
-            >
-              <source src="/videos/hero-video.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
+        {/* Navbar - Fixed with high z-index */}
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Navbar />
+        </div>
 
-          {/* Very Light Dark Overlay - Video more visible */}
-          <div className="absolute inset-0 bg-black/60 z-[1]"></div>
-
-          {/* Gradient Overlay that fades to transparent at bottom */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-[2]"></div>
-
-          {/* Content over video - Higher z-index */}
-          <div className="relative z-10 max-w-4xl mx-auto px-8 mt-8 text-center pt-24 pb-16">
-            <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-6 drop-shadow-[0_0_30px_rgba(6,182,212,0.9)] leading-tight">
-              Colombo International Book Fair 2025
-            </h1>
-
-            <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 mb-8 rounded-full mx-auto shadow-[0_0_20px_rgba(6,182,212,0.8)]"></div>
-
-            <p className="text-xl md:text-2xl text-white max-w-3xl mb-8 leading-relaxed mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-              <span className="text-cyan-300 font-semibold drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]">
-                Step into the future of reading.
-              </span>{" "}
-              Where technology meets literature in an immersive digital
-              experience that transcends boundaries.
-            </p>
-
-            <div className="flex flex-wrap gap-3 justify-center text-sm mb-10">
-              <span className="px-6 py-3 bg-cyan-500/40 backdrop-blur-md rounded-full border border-cyan-400/60 text-white font-mono shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:shadow-[0_0_35px_rgba(6,182,212,0.7)] transition-all duration-300">
-                06th December to 15th December 2025
-              </span>
-              <span className="px-6 py-3 bg-blue-500/40 backdrop-blur-md rounded-full border border-blue-400/60 text-white font-mono shadow-[0_0_25px_rgba(59,130,246,0.5)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] transition-all duration-300">
-                Bandaranaike Memorial International Conference Hall – BMICH.
-              </span>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex gap-4 justify-center flex-wrap">
-              <button
-                onClick={() => navigate("/reservation")}
-                className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 px-8 py-4 rounded-lg text-lg font-bold transition-all transform hover:scale-105 shadow-[0_0_35px_rgba(6,182,212,0.6)] hover:shadow-[0_0_45px_rgba(6,182,212,0.8)]"
+        <main className="relative">
+          {/* HOME SECTION - WITH HERO VIDEO */}
+          <section
+            id="home"
+            className="min-h-screen relative flex items-center justify-center overflow-hidden pb-32 md:pb-48"
+          >
+            {/* Video Background - Lower z-index */}
+            <div className="absolute inset-0 z-0">
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster="/videos/hero-thumbnail.jpg"
               >
-                Reserve Your Stall
-              </button>
-              <button
-                onClick={() =>
-                  document
-                    .getElementById("about")
-                    .scrollIntoView({ behavior: "smooth" })
-                }
-                className="bg-white/10 border-2 border-white/80 hover:bg-white/20 hover:border-white backdrop-blur-md px-8 py-4 rounded-lg text-lg font-bold transition-all hover:shadow-[0_0_25px_rgba(255,255,255,0.5)]"
-              >
-                Learn More
-              </button>
+                <source src="/videos/hero-video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
-          </div>
-        </section>
 
-        {/* ABOUT SECTION */}
-        <section
-          id="about"
-          className="min-h-screen flex flex-col items-center justify-center text-center px-8 gap-8 relative z-10 pt-32 md:pt-48"
-        >
-          <div className="max-w-5xl mx-auto bg-gradient-to-br from-black/80 via-blue-950/40 to-black/80 p-10 md:p-16 rounded-3xl shadow-[0_0_60px_rgba(59,130,246,0.4)] backdrop-blur-2xl border border-blue-500/30 group">
-            {/* Holographic Effect */}
-            <div className="absolute inset-0 bg-gradient-to-bl from-blue-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
-            <div className="absolute -bottom-1/2 -left-1/2 w-full h-full bg-blue-500/10 rounded-full blur-3xl group-hover:animate-pulse"></div>
+            {/* Very Light Dark Overlay - Video more visible */}
+            <div className="absolute inset-0 bg-black/60 z-[1]"></div>
 
-            <div className="relative z-10">
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                <h2 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl">
-                  About the Fair
-                </h2>
-                <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
-              </div>
+            {/* Gradient Overlay that fades to transparent at bottom */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-[2]"></div>
 
-              <div className="h-1 w-32 bg-gradient-to-r from-blue-500 to-cyan-500 mb-8 rounded-full mx-auto shadow-[0_0_15px_rgba(59,130,246,0.6)]"></div>
-              <div>
-                <AboutCarousel />
-              </div>
-              {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8 mt-12">
-                <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/5 p-6 rounded-xl border border-blue-500/30 backdrop-blur-sm hover:border-blue-400/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300">
-                  <div className="text-4xl font-black text-blue-400 mb-2">
-                    50+
-                  </div>
-                  <div className="text-sm text-gray-400 uppercase tracking-wider">
-                    Publishers
-                  </div>
-                </div>
-                <div className="bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 p-6 rounded-xl border border-cyan-500/30 backdrop-blur-sm hover:border-cyan-400/60 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300">
-                  <div className="text-4xl font-black text-cyan-400 mb-2">
-                    100+
-                  </div>
-                  <div className="text-sm text-gray-400 uppercase tracking-wider">
-                    Authors
-                  </div>
-                </div>
-                <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/5 p-6 rounded-xl border border-purple-500/30 backdrop-blur-sm hover:border-purple-400/60 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all duration-300">
-                  <div className="text-4xl font-black text-purple-400 mb-2">
-                    5K+
-                  </div>
-                  <div className="text-sm text-gray-400 uppercase tracking-wider">
-                    Visitors
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+            {/* Content over video - Higher z-index */}
+            <div className="relative z-10 max-w-4xl mx-auto px-8 mt-8 text-center pt-24 pb-16">
+              <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-6 drop-shadow-[0_0_30px_rgba(6,182,212,0.9)] leading-tight">
+                Colombo International Book Fair 2025
+              </h1>
 
-        {/* EVENTS SECTION */}
-        <section id="events" className="mt-20 relative z-10">
-          <EventCarousel />
-        </section>
+              <div className="h-1 w-32 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 mb-8 rounded-full mx-auto shadow-[0_0_20px_rgba(6,182,212,0.8)]"></div>
 
-        {/* REGISTRATION SECTION */}
-        <section
-          id="registration"
-          className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative z-10"
-        >
-          <div className="relative z-10 max-w-2xl">
-            <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-8">
-              Register Now
-            </h2>
-            <p className="text-gray-300 text-xl mb-10">
-              Secure your spot at the future of literary experiences
-            </p>
-            <button
-              onClick={() => navigate("/login")}
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300"
-            >
-              Join the Experience →
-            </button>
-            <div className="mt-12 flex justify-center gap-8 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.6)]"></div>
-                <span>Early Bird Available</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.6)]"></div>
-                <span>Limited Slots</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CONTACT SECTION */}
-        <section
-          id="contact"
-          className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative z-10"
-        >
-          <div className="relative z-10 max-w-2xl">
-            <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-8">
-              Get in Touch
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6 mb-10">
-              <div className="bg-black/60 backdrop-blur-xl p-8 rounded-xl border border-cyan-500/30 hover:border-cyan-400/60 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300">
-                <div className="text-4xl mb-4">📧</div>
-                <h3 className="text-lg font-bold text-cyan-400 mb-3">Email</h3>
-                <p className="text-gray-400 text-sm">info@colombobookfair.lk</p>
-              </div>
-              <div className="bg-black/60 backdrop-blur-xl p-8 rounded-xl border border-blue-500/30 hover:border-blue-400/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300">
-                <div className="text-4xl mb-4">📱</div>
-                <h3 className="text-lg font-bold text-blue-400 mb-3">Phone</h3>
-                <p className="text-gray-400 text-sm">+94 11 234 5678</p>
-              </div>
-            </div>
-            <div className="text-gray-500 text-sm space-y-2">
-              <p>© 2025 Colombo International Book Fair</p>
-              <p className="text-cyan-400/60">
-                Powered by Innovation & Imagination
+              <p className="text-xl md:text-2xl text-white max-w-3xl mb-8 leading-relaxed mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                <span className="text-cyan-300 font-semibold drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]">
+                  Step into the future of reading.
+                </span>{" "}
+                Where technology meets literature in an immersive digital
+                experience that transcends boundaries.
               </p>
+
+              <div className="flex flex-wrap gap-3 justify-center text-sm mb-10">
+                <span className="px-6 py-3 bg-cyan-500/40 backdrop-blur-md rounded-full border border-cyan-400/60 text-white font-mono shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:shadow-[0_0_35px_rgba(6,182,212,0.7)] transition-all duration-300">
+                  06th December to 15th December 2025
+                </span>
+                <span className="px-6 py-3 bg-blue-500/40 backdrop-blur-md rounded-full border border-blue-400/60 text-white font-mono shadow-[0_0_25px_rgba(59,130,246,0.5)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] transition-all duration-300">
+                  Bandaranaike Memorial International Conference Hall – BMICH.
+                </span>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex gap-4 justify-center flex-wrap">
+                <button
+                  onClick={() => navigate("/reservation")}
+                  className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 px-8 py-4 rounded-lg text-lg font-bold transition-all transform hover:scale-105 shadow-[0_0_35px_rgba(6,182,212,0.6)] hover:shadow-[0_0_45px_rgba(6,182,212,0.8)]"
+                >
+                  Reserve Your Stall
+                </button>
+                <button
+                  onClick={() =>
+                    document
+                      .getElementById("about")
+                      .scrollIntoView({ behavior: "smooth" })
+                  }
+                  className="bg-white/10 border-2 border-white/80 hover:bg-white/20 hover:border-white backdrop-blur-md px-8 py-4 rounded-lg text-lg font-bold transition-all hover:shadow-[0_0_25px_rgba(255,255,255,0.5)]"
+                >
+                  Learn More
+                </button>
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
-    </div>
+          </section>
+
+          {/* ABOUT SECTION */}
+          <section
+            id="about"
+            className="min-h-screen flex flex-col items-center justify-center text-center px-8 gap-8 relative z-10 pt-32 md:pt-48"
+          >
+            <div className="max-w-5xl mx-auto bg-gradient-to-br from-black/80 via-blue-950/40 to-black/80 p-10 md:p-16 rounded-3xl shadow-[0_0_60px_rgba(59,130,246,0.4)] backdrop-blur-2xl border border-blue-500/30 group">
+              {/* Holographic Effect */}
+              <div className="absolute inset-0 bg-gradient-to-bl from-blue-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
+              <div className="absolute -bottom-1/2 -left-1/2 w-full h-full bg-blue-500/10 rounded-full blur-3xl group-hover:animate-pulse"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                  <h2 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl">
+                    About the Fair
+                  </h2>
+                  <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+                </div>
+
+                <div className="h-1 w-32 bg-gradient-to-r from-blue-500 to-cyan-500 mb-8 rounded-full mx-auto shadow-[0_0_15px_rgba(59,130,246,0.6)]"></div>
+                <div>
+                  <AboutCarousel />
+                </div>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8 mt-12">
+                  <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/5 p-6 rounded-xl border border-blue-500/30 backdrop-blur-sm hover:border-blue-400/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300">
+                    <div className="text-4xl font-black text-blue-400 mb-2">
+                      50+
+                    </div>
+                    <div className="text-sm text-gray-400 uppercase tracking-wider">
+                      Publishers
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 p-6 rounded-xl border border-cyan-500/30 backdrop-blur-sm hover:border-cyan-400/60 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300">
+                    <div className="text-4xl font-black text-cyan-400 mb-2">
+                      100+
+                    </div>
+                    <div className="text-sm text-gray-400 uppercase tracking-wider">
+                      Authors
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/5 p-6 rounded-xl border border-purple-500/30 backdrop-blur-sm hover:border-purple-400/60 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)] transition-all duration-300">
+                    <div className="text-4xl font-black text-purple-400 mb-2">
+                      5K+
+                    </div>
+                    <div className="text-sm text-gray-400 uppercase tracking-wider">
+                      Visitors
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* EVENTS SECTION */}
+          <section id="events" className="mt-20 relative z-10">
+            <EventCarousel />
+          </section>
+
+          {/* REGISTRATION SECTION */}
+          <section
+            id="registration"
+            className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative z-10"
+          >
+            <div className="relative z-10 max-w-2xl">
+              <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-8">
+                Register Now
+              </h2>
+              <p className="text-gray-300 text-xl mb-10">
+                Secure your spot at the future of literary experiences
+              </p>
+              <button
+                onClick={() => navigate("/login")}
+                className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300"
+              >
+                Join the Experience →
+              </button>
+              <div className="mt-12 flex justify-center gap-8 text-sm text-gray-400">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.6)]"></div>
+                  <span>Early Bird Available</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.6)]"></div>
+                  <span>Limited Slots</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* CONTACT SECTION */}
+          <section
+            id="contact"
+            className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative z-10"
+          >
+            <div className="relative z-10 max-w-2xl">
+              <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-8">
+                Get in Touch
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6 mb-10">
+                <div className="bg-black/60 backdrop-blur-xl p-8 rounded-xl border border-cyan-500/30 hover:border-cyan-400/60 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300">
+                  <div className="text-4xl mb-4">📧</div>
+                  <h3 className="text-lg font-bold text-cyan-400 mb-3">
+                    Email
+                  </h3>
+                  <p className="text-gray-400 text-sm">
+                    info@colombobookfair.lk
+                  </p>
+                </div>
+                <div className="bg-black/60 backdrop-blur-xl p-8 rounded-xl border border-blue-500/30 hover:border-blue-400/60 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-all duration-300">
+                  <div className="text-4xl mb-4">📱</div>
+                  <h3 className="text-lg font-bold text-blue-400 mb-3">
+                    Phone
+                  </h3>
+                  <p className="text-gray-400 text-sm">+94 11 234 5678</p>
+                </div>
+              </div>
+              <div className="text-gray-500 text-sm space-y-2">
+                <p>© 2025 Colombo International Book Fair</p>
+                <p className="text-cyan-400/60">
+                  Powered by Innovation & Imagination
+                </p>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </>
   );
 }
