@@ -4,6 +4,7 @@ import emailjs from "@emailjs/browser";
 import Navbar from "../components/Navbar";
 import EventCarousel from "../components/EventCarousel";
 import AboutCarousel from "../components/AboutCarousel";
+import Footer from "../components/Footer";
 import CinemaModal from "../components/CinemaModal";
 import { EMAIL_CONFIG } from "../config/emailConfig";
 
@@ -81,8 +82,7 @@ export default function Home() {
   return (
     <>
       {/* Cinema Modal - Shows EVERY time on this page */}
-      
-
+      <CinemaModal />
       {/* Main Content */}
       <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
         {/* Background for all sections */}
@@ -646,6 +646,7 @@ export default function Home() {
               </div>
             </div>
           </section>
+          <Footer />
         </main>
       </div>
     </>
