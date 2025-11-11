@@ -10,40 +10,40 @@ export default function EventCarousel() {
 
   const events = [
     {
+      title: "Colombo Book Fair",
+      image: { src: "/event/book_fair.jpg" },
+      gradient: "from-indigo-500 to-purple-500",
+      description: "Explore thousands of books and meet fellow book lovers",
+    },
+    {
       title: "Book Launches",
-      icon: "📚",
+      image: { src: "/event/Book-Launches.jpg" },
       gradient: "from-purple-500 to-pink-500",
       description: "Discover new releases from acclaimed authors",
     },
     {
-      title: "Panel Talks",
-      icon: "🎤",
+      title: "Discussion Sessions",
+      image: { src: "/event/Writers-Discussion.jpg" },
       gradient: "from-blue-500 to-cyan-500",
-      description: "Engage in thought-provoking discussions",
+      description: "Engage with writers in thought-provoking sessions",
     },
     {
-      title: "Workshops",
-      icon: "🎨",
+      title: "Musical Programs & Stage Dramas",
+      image: { src: "/event/Music.jpg" },
       gradient: "from-pink-500 to-red-500",
-      description: "Learn creative writing and illustration",
+      description: "Experience captivating performances and theatrical shows",
     },
     {
-      title: "Digital Art Expo",
-      icon: "💻",
+      title: "Katapath Pawura",
+      image: { src: "/event/Ketapath-Paura.jpg" },
       gradient: "from-green-500 to-emerald-500",
-      description: "Experience the future of digital storytelling",
+      description: "Share your creative poems and verses with the community",
     },
     {
-      title: "Meet the Authors",
-      icon: "✍️",
+      title: "Kids Activities",
+      image: { src: "/event/Kids.jpg" },
       gradient: "from-yellow-500 to-orange-500",
-      description: "Connect with your favorite writers",
-    },
-    {
-      title: "Poetry Night",
-      icon: "🎭",
-      gradient: "from-indigo-500 to-purple-500",
-      description: "Immerse yourself in spoken word performances",
+      description: "Painting, clay work, dramas, and puppet shows for children",
     },
   ];
 
@@ -77,7 +77,13 @@ export default function EventCarousel() {
   };
 
   const handleMouseDown = (e) => handleStart(e.clientX);
-  const handleMouseMove = (e) => handleMove(e.clientX);
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - startX;
+    setRotation(currentRotation + deltaX * 0.5);
+  };
+
   const handleMouseUp = () => handleEnd();
 
   const handleTouchStart = (e) => handleStart(e.touches[0].clientX);
@@ -100,6 +106,14 @@ export default function EventCarousel() {
     const targetRotation = -index * anglePerCard;
     setRotation(targetRotation);
     setAutoRotate(false);
+  };
+
+  // Calculate active index based on rotation
+  const getActiveIndex = () => {
+    const anglePerCard = 360 / events.length;
+    const normalizedRotation = ((rotation % 360) + 360) % 360;
+    const index = Math.round(normalizedRotation / anglePerCard) % events.length;
+    return (events.length - index) % events.length;
   };
 
   return (
@@ -167,9 +181,13 @@ export default function EventCarousel() {
 
                     {/* Content */}
                     <div className="relative h-full flex flex-col items-center justify-center p-8 text-center">
-                      {/* Icon */}
-                      <div className="text-7xl mb-6 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
-                        {event.icon}
+                      {/* Image */}
+                      <div className="w-24 h-24 mb-6 rounded-full overflow-hidden border-4 border-purple-500/30 group-hover:border-purple-400/60 transition-all duration-500 group-hover:scale-110">
+                        <img
+                          src={event.image.src}
+                          alt={event.title}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
 
                       {/* Title */}
@@ -204,20 +222,21 @@ export default function EventCarousel() {
 
         {/* Navigation Dots */}
         <div className="flex justify-center gap-3 mt-12">
-          {events.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => navigateTo(i)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                Math.abs(
-                  (rotation / (360 / events.length) + i) % events.length
-                ) < 0.5
-                  ? "bg-purple-400 w-8 shadow-[0_0_10px_rgba(168,85,247,0.8)]"
-                  : "bg-purple-500/30 hover:bg-purple-500/60"
-              }`}
-              aria-label={`Navigate to ${events[i].title}`}
-            />
-          ))}
+          {events.map((_, i) => {
+            const activeIndex = getActiveIndex();
+            return (
+              <button
+                key={i}
+                onClick={() => navigateTo(i)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  i === activeIndex
+                    ? "bg-purple-400 w-8 shadow-[0_0_10px_rgba(168,85,247,0.8)]"
+                    : "bg-purple-500/30 hover:bg-purple-500/60"
+                }`}
+                aria-label={`Navigate to ${events[i].title}`}
+              />
+            );
+          })}
         </div>
 
         {/* Controls */}

@@ -94,7 +94,11 @@ export default function Home() {
               {/* CTA Buttons */}
               <div className="flex gap-4 justify-center flex-wrap">
                 <button
-                  onClick={() => navigate("/reservation")}
+                  onClick={() =>
+                    document
+                      .getElementById("registration")
+                      .scrollIntoView({ behavior: "smooth" })
+                  }
                   className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 px-8 py-4 rounded-lg text-lg font-bold transition-all transform hover:scale-105 shadow-[0_0_35px_rgba(6,182,212,0.6)] hover:shadow-[0_0_45px_rgba(6,182,212,0.8)]"
                 >
                   Reserve Your Stall
@@ -172,32 +176,244 @@ export default function Home() {
             <EventCarousel />
           </section>
 
-          {/* REGISTRATION SECTION */}
+          {/* STALL RESERVATION SECTION */}
           <section
             id="registration"
-            className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative z-10"
+            className="min-h-screen flex flex-col items-center justify-center text-center px-4 py-20 relative z-10"
           >
-            <div className="relative z-10 max-w-2xl">
-              <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-8">
-                Register Now
-              </h2>
-              <p className="text-gray-300 text-xl mb-10">
-                Secure your spot at the future of literary experiences
-              </p>
-              <button
-                onClick={() => navigate("/login")}
-                className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 rounded-full font-bold text-white shadow-2xl hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300"
-              >
-                Join the Experience →
-              </button>
-              <div className="mt-12 flex justify-center gap-8 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.6)]"></div>
-                  <span>Early Bird Available</span>
+            <div className="relative z-10 max-w-6xl w-full">
+              {/* Main Heading */}
+              <div className="mb-12">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
+                  <h2 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent drop-shadow-2xl">
+                    Reserve Your Stall
+                  </h2>
+                  <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(168,85,247,0.8)]"></div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.6)]"></div>
-                  <span>Limited Slots</span>
+
+                <div className="h-1 w-40 bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 mb-6 rounded-full mx-auto shadow-[0_0_20px_rgba(6,182,212,0.6)]"></div>
+
+                <p className="text-gray-300 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed mb-4">
+                  <span className="text-cyan-400 font-semibold">
+                    Showcase your publications
+                  </span>{" "}
+                  to thousands of book enthusiasts.
+                  <br />
+                  Secure your premium exhibition space today!
+                </p>
+                <p className="text-gray-400 text-base max-w-2xl mx-auto">
+                  Online reservations are now open for exhibitors, publishers,
+                  and bookstores
+                </p>
+              </div>
+
+              {/* Main Stall Reservation Card */}
+              <div className="max-w-4xl mx-auto mb-12">
+                <div className="bg-gradient-to-br from-blue-500/20 via-cyan-500/10 to-purple-500/20 backdrop-blur-xl p-10 md:p-12 rounded-3xl border-2 border-cyan-500/50 hover:border-cyan-400/70 shadow-[0_0_60px_rgba(6,182,212,0.4)] hover:shadow-[0_0_80px_rgba(6,182,212,0.6)] transition-all duration-500 group relative overflow-hidden">
+                  {/* Animated Background */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="absolute -top-1/2 -right-1/2 w-full h-full bg-cyan-500/10 rounded-full blur-3xl group-hover:animate-pulse"></div>
+
+                  {/* Featured Badge */}
+                  <div className="absolute top-6 right-6 flex gap-2">
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black text-xs font-bold px-4 py-2 rounded-full shadow-[0_0_20px_rgba(251,191,36,0.6)] animate-pulse">
+                      ⭐ ONLINE BOOKING OPEN
+                    </div>
+                  </div>
+
+                  <div className="relative z-10">
+                    {/* Icon */}
+                    <div className="text-7xl mb-6 transform group-hover:scale-110 transition-transform duration-500">
+                      🏪
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-6">
+                      Exhibition Stall Reservation
+                    </h3>
+
+                    {/* Divider */}
+                    <div className="h-1 w-24 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full mx-auto mb-8 group-hover:w-32 transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.6)]"></div>
+
+                    {/* Features Grid */}
+                    <div className="grid md:grid-cols-2 gap-4 mb-8 text-left">
+                      <div className="bg-black/40 backdrop-blur-sm p-4 rounded-xl border border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300">
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl">📍</span>
+                          <div>
+                            <h4 className="text-cyan-400 font-semibold mb-1">
+                              Premium Location
+                            </h4>
+                            <p className="text-gray-400 text-sm">
+                              Strategic placement in high-traffic exhibition
+                              halls
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-black/40 backdrop-blur-sm p-4 rounded-xl border border-blue-500/30 hover:border-blue-400/60 transition-all duration-300">
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl">🛠️</span>
+                          <div>
+                            <h4 className="text-blue-400 font-semibold mb-1">
+                              Complete Setup
+                            </h4>
+                            <p className="text-gray-400 text-sm">
+                              Furniture, lighting & technical support included
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-black/40 backdrop-blur-sm p-4 rounded-xl border border-purple-500/30 hover:border-purple-400/60 transition-all duration-300">
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl">📢</span>
+                          <div>
+                            <h4 className="text-purple-400 font-semibold mb-1">
+                              Marketing Support
+                            </h4>
+                            <p className="text-gray-400 text-sm">
+                              Featured in event directory & promotional
+                              materials
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-black/40 backdrop-blur-sm p-4 rounded-xl border border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300">
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl">🎯</span>
+                          <div>
+                            <h4 className="text-cyan-400 font-semibold mb-1">
+                              Target Audience
+                            </h4>
+                            <p className="text-gray-400 text-sm">
+                              Direct access to 5,000+ book enthusiasts
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Additional Benefits */}
+                    <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 backdrop-blur-sm p-6 rounded-2xl border border-cyan-500/20 mb-8">
+                      <h4 className="text-lg font-bold text-cyan-400 mb-4 flex items-center justify-center gap-2">
+                        <span>✨</span> What's Included <span>✨</span>
+                      </h4>
+                      <div
+                        className=" grid md:grid-cols-2 gap-3 text-gray-300 text-sm"
+                        style={{ paddingLeft: "7rem" }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-cyan-400">✓</span>
+                          <span>Electrical power supply</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-cyan-400">✓</span>
+                          <span>WiFi connectivity</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-cyan-400">✓</span>
+                          <span>Company name board</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-cyan-400">✓</span>
+                          <span>2 exhibitor passes</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-cyan-400">✓</span>
+                          <span>Security coverage</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-cyan-400">✓</span>
+                          <span>Cleaning services</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stall Types/Sizes */}
+                    <div className="max-w-4xl mx-auto mb-12">
+                      <h3 className="text-2xl md:text-3xl font-bold text-cyan-400 mb-8">
+                        Available Stall Options
+                      </h3>
+                      <div className="grid md:grid-cols-3 gap-6">
+                        <div className="bg-gradient-to-br from-black/60 via-blue-950/30 to-black/60 backdrop-blur-xl p-6 rounded-2xl border border-blue-500/30 hover:border-blue-400/60 hover:shadow-[0_0_35px_rgba(59,130,246,0.3)] transition-all duration-300">
+                          <div className="text-4xl mb-3">📦</div>
+                          <h4 className="text-xl font-bold text-blue-400 mb-2">
+                            Standard
+                          </h4>
+                          <p className="text-gray-400 text-sm mb-4">
+                            3m × 3m space
+                          </p>
+                          <ul className="text-gray-400 text-xs space-y-1 text-left">
+                            <li>• Basic booth setup</li>
+                            <li>• Power outlet</li>
+                          </ul>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-black/60 via-cyan-950/30 to-black/60 backdrop-blur-xl p-6 rounded-2xl border-2 border-cyan-500/50 hover:border-cyan-400/70 hover:shadow-[0_0_40px_rgba(6,182,212,0.4)] transition-all duration-300 relative">
+                          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold px-4 py-1 rounded-full">
+                            POPULAR
+                          </div>
+                          <div className="text-4xl mb-3">🏢</div>
+                          <h4 className="text-xl font-bold text-cyan-400 mb-2">
+                            Premium
+                          </h4>
+                          <p className="text-gray-400 text-sm mb-4">
+                            6m × 3m space
+                          </p>
+                          <ul className="text-gray-400 text-xs space-y-1 text-left">
+                            <li>• Corner location</li>
+                            <li>• Enhanced lighting</li>
+                            <li>• Storage cabinet</li>
+                          </ul>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-black/60 via-purple-950/30 to-black/60 backdrop-blur-xl p-6 rounded-2xl border border-purple-500/30 hover:border-purple-400/60 hover:shadow-[0_0_35px_rgba(168,85,247,0.3)] transition-all duration-300">
+                          <div className="text-4xl mb-3">🏛️</div>
+                          <h4 className="text-xl font-bold text-purple-400 mb-2">
+                            Executive
+                          </h4>
+                          <p className="text-gray-400 text-sm mb-4">
+                            9m × 3m space
+                          </p>
+                          <ul className="text-gray-400 text-xs space-y-1 text-left">
+                            <li>• Prime entrance location</li>
+                            <li>• Custom booth design</li>
+                            <li>• Meeting area</li>
+                            <li>• Audio/visual equipment</li>
+                            <li>• Dedicated staff support</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CTA Button */}
+                    <button
+                      onClick={() => navigate("/reservation")}
+                      className="px-12 py-5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 rounded-full font-bold text-xl text-white shadow-[0_0_40px_rgba(6,182,212,0.6)] hover:shadow-[0_0_60px_rgba(6,182,212,0.8)] transform hover:scale-105 transition-all duration-300 relative group/btn overflow-hidden"
+                    >
+                      <span className="relative z-10 flex items-center gap-3">
+                        Reserve Your Stall Now
+                        <svg
+                          className="w-6 h-6 transform group-hover/btn:translate-x-2 transition-transform duration-300"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 7l5 5m0 0l-5 5m5-5H6"
+                          />
+                        </svg>
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
