@@ -32,6 +32,44 @@ export default function Home() {
     }
   }, []);
 
+  // Smooth scroll function with offset for fixed navbar
+  const smoothScrollTo = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      const navbarHeight = 80; // Adjust this based on your navbar height
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - navbarHeight;
+
+      // Custom smooth scroll with easing
+      const startPosition = window.pageYOffset;
+      const distance = offsetPosition - startPosition;
+      const duration = 800; // 800ms for smooth animation
+      let start = null;
+
+      // Easing function for smooth animation
+      const easeInOutCubic = (t) => {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      };
+
+      // Animation function
+      const animation = (currentTime) => {
+        if (start === null) start = currentTime;
+        const timeElapsed = currentTime - start;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+
+        window.scrollTo(0, startPosition + distance * ease);
+
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        }
+      };
+
+      requestAnimationFrame(animation);
+    }
+  };
+
   // Handle form input changes - THIS WAS MISSING!
   const handleInputChange = (e) => {
     setFormData({
@@ -135,27 +173,22 @@ export default function Home() {
                   06th December to 15th December 2025
                 </span>
                 <span className="px-6 py-3 bg-blue-500/40 backdrop-blur-md rounded-full border border-blue-400/60 text-white font-mono shadow-[0_0_25px_rgba(59,130,246,0.5)] hover:shadow-[0_0_35px_rgba(59,130,246,0.7)] transition-all duration-300">
+                  9.00 AM to 9.00 PM Daily
+                </span>
+                <span className="px-6 py-3 bg-purple-500/40 backdrop-blur-md rounded-full border border-purple-400/60 text-white font-mono shadow-[0_0_25px_rgba(139,92,246,0.5)] hover:shadow-[0_0_35px_rgba(139,92,246,0.7)] transition-all duration-300">
                   Bandaranaike Memorial International Conference Hall – BMICH.
                 </span>
               </div>
 
               <div className="flex gap-4 justify-center flex-wrap">
                 <button
-                  onClick={() =>
-                    document
-                      .getElementById("registration")
-                      .scrollIntoView({ behavior: "smooth" })
-                  }
+                  onClick={() => smoothScrollTo("registration")}
                   className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 px-8 py-4 rounded-lg text-lg font-bold transition-all transform hover:scale-105 shadow-[0_0_35px_rgba(6,182,212,0.6)] hover:shadow-[0_0_45px_rgba(6,182,212,0.8)]"
                 >
                   Reserve Your Stall
                 </button>
                 <button
-                  onClick={() =>
-                    document
-                      .getElementById("about")
-                      .scrollIntoView({ behavior: "smooth" })
-                  }
+                  onClick={() => smoothScrollTo("about")}
                   className="bg-white/10 border-2 border-white/80 hover:bg-white/20 hover:border-white backdrop-blur-md px-8 py-4 rounded-lg text-lg font-bold transition-all hover:shadow-[0_0_25px_rgba(255,255,255,0.5)]"
                 >
                   Learn More
