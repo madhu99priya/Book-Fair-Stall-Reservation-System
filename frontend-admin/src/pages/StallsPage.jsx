@@ -10,18 +10,19 @@ export default function StallsPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: stalls = [], isLoading } = useQuery(['stalls'], () => stallsService.list());
+  const { data: stalls = [], isLoading } = useQuery({
+    queryKey: ['stalls'],
+    queryFn: () => stallsService.list()
+  });
 
-  const reserveMutation = useMutation(
-    ({ stallIds }) => stallsService.reserve(stallIds, 'BUSINESS_ID_PLACEHOLDER'),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['stalls']);
-        setSelected([]);
-        setConfirmOpen(false);
-      }
+  const reserveMutation = useMutation({
+    mutationFn: ({ stallIds }) => stallsService.reserve(stallIds, 'BUSINESS_ID_PLACEHOLDER'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['stalls'] });
+      setSelected([]);
+      setConfirmOpen(false);
     }
-  );
+  });
 
   function handleSelect(stall) {
     setSelected((prev) =>

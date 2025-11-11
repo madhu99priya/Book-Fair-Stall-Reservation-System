@@ -4,7 +4,10 @@ import usersService from '../services/usersService.js';
 import UserTable from '../components/users/UserTable.jsx';
 
 export default function UsersPage() {
-  const { data: users = [], isLoading } = useQuery(['users'], () => usersService.list());
+  const { data: users = [], isLoading } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => usersService.list()
+  });
 
   return (
     <div>

@@ -5,9 +5,10 @@ import ReservationTable from '../components/reservations/ReservationTable.jsx';
 import Modal from '../components/common/Modal.jsx';
 
 export default function ReservationsPage() {
-  const { data: reservations = [], isLoading } = useQuery(['reservations'], () =>
-    reservationsService.list()
-  );
+  const { data: reservations = [], isLoading } = useQuery({
+    queryKey: ['reservations'],
+    queryFn: () => reservationsService.list()
+  });
   const [activeReservation, setActiveReservation] = useState(null);
 
   return (

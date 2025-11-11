@@ -5,6 +5,18 @@ const stallsService = {
     const { data } = await apiClient.get('/stalls', { params });
     return data;
   },
+  async create(stallData) {
+    const { data } = await apiClient.post('/stalls', stallData);
+    return data;
+  },
+  async update(id, stallData) {
+    const { data } = await apiClient.put(`/stalls/${id}`, stallData);
+    return data;
+  },
+  async delete(id) {
+    const { data } = await apiClient.delete(`/stalls/${id}`);
+    return data;
+  },
   async reserve(stallIds, businessId) {
     const { data } = await apiClient.post('/stalls/reserve', { stallIds, businessId });
     return data;
