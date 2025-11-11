@@ -5,6 +5,7 @@ import GenreForm from '../components/genres/GenreForm.jsx';
 import GenreTable from '../components/genres/GenreTable.jsx';
 
 export default function GenresPage() {
+  const [editGenre, setEditGenre] = React.useState(null);
   const queryClient = useQueryClient();
   const { data: genres = [], isLoading } = useQuery({
     queryKey: ['genres'],
@@ -16,21 +17,43 @@ export default function GenresPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['genres'] })
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, payload }) => genresService.update(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['genres'] });
+      setEditGenre(null);
+    }
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id) => genresService.remove(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['genres'] })
   });
 
+  const handleSubmit = (payload) => {
+    if (editGenre) {
+      updateMutation.mutate({ id: editGenre.id, payload });
+    } else {
+      createMutation.mutate(payload);
+    }
+  };
+
   return (
     <div>
       <h1>Genres</h1>
-      <GenreForm onSubmit={(p) => createMutation.mutate(p)} loading={createMutation.isLoading} />
+      <GenreForm 
+        onSubmit={handleSubmit} 
+        loading={createMutation.isLoading || updateMutation.isPending}
+        genre={editGenre}
+        onCancel={() => setEditGenre(null)}
+      />
       {isLoading ? (
         <p>Loading...</p>
       ) : (
         <GenreTable
           genres={genres}
           onDelete={(id) => deleteMutation.mutate(id)}
+          onEdit={(genre) => setEditGenre(genre)}
         />
       )}
     </div>
