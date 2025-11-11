@@ -27,7 +27,7 @@ export default function Reservation() {
       try {
         setLoading(true);
         const res = await axios.get("http://localhost:8081/api/stalls");
-        setStalls(res.data); // Expecting array of stalls: [{id, name, size, x, z, reserved}, ...]
+        setStalls(res.data);
       } catch (err) {
         console.error("❌ Failed to fetch stalls", err);
       } finally {
