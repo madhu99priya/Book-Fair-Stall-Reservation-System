@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <>
       {/* Cinema Modal - Shows EVERY time on this page */}
-      <CinemaModal />
+      
 
       {/* Main Content */}
       <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">

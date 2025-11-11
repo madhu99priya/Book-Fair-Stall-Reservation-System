@@ -1,6 +1,7 @@
 // src/pages/Register.jsx
 import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
+import Navbarauth from "../components/Navbarauth";
 
 export default function Register() {
   const { register } = useContext(AuthContext);
@@ -29,6 +30,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white p-4">
+      <Navbarauth />
       <form
         onSubmit={handleSubmit}
         className="bg-gray-800 p-8 rounded-xl w-full max-w-md shadow-lg"
@@ -82,6 +84,15 @@ export default function Register() {
         >
           Register
         </button>
+        <p className="mt-4 text-center text-gray-300">
+          Have an account already?{" "}
+          <a
+            href="/login"
+            className="text-blue-400 hover:underline"
+          >
+            Login here
+          </a>
+        </p>
       </form>
     </div>
   );

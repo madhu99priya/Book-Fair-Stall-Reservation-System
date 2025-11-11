@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import axios from "../api/api";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Navbarauth from "../components/Navbarauth";  
 
 export default function Profile() {
   const { user, logout } = useContext(AuthContext);
@@ -136,6 +137,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8 pt-24">
+      <Navbarauth />
       <h1 className="text-3xl font-bold mb-6">My Account</h1>
 
       {/* User Info Section */}
