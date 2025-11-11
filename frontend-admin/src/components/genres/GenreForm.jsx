@@ -1,25 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function GenreForm({ onSubmit, loading }) {
+export default function GenreForm({ onSubmit, loading, genre, onCancel }) {
   const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (genre) {
+      setName(genre.name || '');
+    }
+  }, [genre]);
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!name.trim()) return;
     onSubmit({ name: name.trim() });
-    setName('');
+    if (!genre) setName('');
   }
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
       <input
-        placeholder="New genre name"
+        placeholder={genre ? 'Edit genre name' : 'New genre name'}
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
       />
+      {genre && (
+        <button type="button" onClick={onCancel} disabled={loading}>
+          Cancel
+        </button>
+      )}
       <button type="submit" disabled={loading}>
-        {loading ? 'Adding...' : 'Add Genre'}
+        {loading ? (genre ? 'Saving...' : 'Adding...') : genre ? 'Save' : 'Add Genre'}
       </button>
     </form>
   );
