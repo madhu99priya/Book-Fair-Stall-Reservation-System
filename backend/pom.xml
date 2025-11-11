@@ -23,7 +23,6 @@
     </properties>
 
     <dependencies>
-
         <!-- 🌐 Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -89,7 +88,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- ZXing (for QR code generation) -->
+        <!-- 📷 ZXing (QR code generation) -->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
@@ -100,13 +99,6 @@
             <artifactId>javase</artifactId>
             <version>3.5.2</version>
         </dependency>
-
-        <!-- Spring Boot Mail Starter -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
 
         <!-- 🧪 Testing -->
         <dependency>
@@ -123,24 +115,14 @@
 
     <build>
         <plugins>
-
-            <!-- 🧰 Compiler Plugin -->
+            <!-- 🚀 Spring Boot Maven Plugin (only once!) -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.5.7</version> <!-- match your Spring Boot version -->
                 <configuration>
                     <mainClass>com.bookfair.backend.BackendApplication</mainClass>
                 </configuration>
             </plugin>
-
-            <!-- 🚀 Spring Boot Maven Plugin -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
         </plugins>
     </build>
-
 </project>
