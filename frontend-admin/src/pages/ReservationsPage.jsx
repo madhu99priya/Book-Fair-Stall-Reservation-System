@@ -21,9 +21,54 @@ export default function ReservationsPage() {
     return matchesSearch && matchesStatus;
   });
 
+  const exportToCSV = () => {
+    const headers = ['ID', 'Business Name', 'Stalls', 'Status', 'Created At'];
+    const rows = filteredReservations.map(r => [
+      r.id,
+      r.businessName || 'N/A',
+      r.stalls?.map(s => s.name).join('; ') || '',
+      r.status,
+      new Date(r.createdAt).toLocaleString()
+    ]);
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `reservations_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div>
-      <h1>Reservations</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h1 style={{ margin: 0 }}>Reservations</h1>
+        <button
+          onClick={exportToCSV}
+          disabled={filteredReservations.length === 0}
+          style={{
+            padding: '0.5rem 1rem',
+            border: 'none',
+            borderRadius: '4px',
+            background: '#6366f1',
+            color: '#fff',
+            cursor: filteredReservations.length > 0 ? 'pointer' : 'not-allowed',
+            opacity: filteredReservations.length > 0 ? 1 : 0.5,
+            fontWeight: '500',
+            fontSize: '0.875rem'
+          }}
+        >
+          📊 Export to CSV
+        </button>
+      </div>
       <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
         <input
           type="text"
