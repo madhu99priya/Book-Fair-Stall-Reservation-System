@@ -6,14 +6,19 @@ import GenreTable from '../components/genres/GenreTable.jsx';
 
 export default function GenresPage() {
   const queryClient = useQueryClient();
-  const { data: genres = [], isLoading } = useQuery(['genres'], () => genresService.list());
-
-  const createMutation = useMutation((payload) => genresService.create(payload), {
-    onSuccess: () => queryClient.invalidateQueries(['genres'])
+  const { data: genres = [], isLoading } = useQuery({
+    queryKey: ['genres'],
+    queryFn: () => genresService.list()
   });
 
-  const deleteMutation = useMutation((id) => genresService.remove(id), {
-    onSuccess: () => queryClient.invalidateQueries(['genres'])
+  const createMutation = useMutation({
+    mutationFn: (payload) => genresService.create(payload),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['genres'] })
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => genresService.remove(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['genres'] })
   });
 
   return (

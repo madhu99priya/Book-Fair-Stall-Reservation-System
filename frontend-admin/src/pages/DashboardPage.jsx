@@ -6,11 +6,18 @@ import usersService from '../services/usersService.js';
 import Spinner from '../components/common/Spinner.jsx';
 
 export default function DashboardPage() {
-  const resQ = useQuery(['reservations', { limit: 5 }], () =>
-    reservationsService.list({ limit: 5 })
-  );
-  const stallsQ = useQuery(['stalls-summary'], () => stallsService.list());
-  const usersQ = useQuery(['users-summary'], () => usersService.list({ limit: 5 }));
+  const resQ = useQuery({
+    queryKey: ['reservations', { limit: 5 }],
+    queryFn: () => reservationsService.list({ limit: 5 })
+  });
+  const stallsQ = useQuery({
+    queryKey: ['stalls-summary'],
+    queryFn: () => stallsService.list()
+  });
+  const usersQ = useQuery({
+    queryKey: ['users-summary'],
+    queryFn: () => usersService.list({ limit: 5 })
+  });
 
   if (resQ.isLoading || stallsQ.isLoading || usersQ.isLoading) return <Spinner />;
 
