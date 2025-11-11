@@ -6,6 +6,8 @@ import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
 
+import java.util.List;
+
 @Entity
 @Table(name = "reservations")
 @Data
@@ -23,10 +25,13 @@ public class Reservation {
     @NonNull
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stall_id", nullable = false)
-    @NonNull
-    private Stall stall;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "reservation_stalls",
+        joinColumns = @JoinColumn(name = "reservation_id"),
+        inverseJoinColumns = @JoinColumn(name = "stall_id")
+    )
+    private List<Stall> stalls;
 
     private LocalDateTime reservedAt;
 
