@@ -1,0 +1,31 @@
+# ===============================
+# Server Config
+# ===============================
+server.port=8081
+
+# ===============================
+# PostgreSQL Database Connection
+# ===============================
+spring.datasource.url=jdbc:postgresql://your-db-host:5432/postgres?sslmode=require
+spring.datasource.username=YOUR_DB_USERNAME
+spring.datasource.password=YOUR_DB_PASSWORD
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# ===============================
+# JPA / Hibernate Settings
+# ===============================
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# ===============================
+# Email Configuration  
+# ===============================
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=YOUR_EMAIL
+spring.mail.password=YOUR_EMAIL_PASSWORD
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
