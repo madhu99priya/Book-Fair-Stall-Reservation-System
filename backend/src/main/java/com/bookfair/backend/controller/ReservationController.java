@@ -40,25 +40,20 @@ public class ReservationController {
             List<Long> stallIds = body.get("stallIds");
             User user = userService.getUserByEmail(authentication.getName());
 
-            // 1️⃣ Create reservations
-            List<Reservation> reservations = stallIds.stream()
-                    .map(id -> reservationService.createReservation(user, id))
-                    .collect(Collectors.toList());
+            // Create a single reservation for multiple stalls
+            Reservation reservation = reservationService.createReservation(user, stallIds);
 
-            // 2️⃣ Reserved stalls
-            List<Stall> reservedStalls = reservations.stream()
-                    .map(Reservation::getStall)
-                    .collect(Collectors.toList());
-
+            // Reserved stalls
+            List<Stall> reservedStalls = reservation.getStalls();
             response.put("reservedStalls", reservedStalls);
 
-            // 3️⃣ Generate QR code
+            // Generate QR code
             String qrContent = String.format(
                     "Reservation IDs: %s\nUser: %s\nStalls: %s\nTime: %s",
-                    reservations.stream().map(r -> r.getId().toString()).collect(Collectors.joining(",")),
+                    reservation.getId(),
                     user.getEmail(),
                     reservedStalls.stream().map(Stall::getName).collect(Collectors.joining(",")),
-                    reservations.get(0).getReservedAt()
+                    reservation.getReservedAt()
             );
 
             byte[] qrBytes = null;
@@ -76,16 +71,8 @@ public class ReservationController {
                 System.err.println("QR generation failed: " + e.getMessage());
             }
 
-            response.put("qrCodeBase64", qrCodeBase64);
-
-            // Optional: save QR code in the first reservation
-            if (qrCodeBase64 != null && !reservations.isEmpty()) {
-                reservations.get(0).setQrCodeBase64(qrCodeBase64);
-            }
-
             // Send email with QR code
-            if (qrBytes != null) {
-                try {
+            if (qrBytes != null && user.getEmail() != null) {
                     String subject = "Your Stall Reservation Confirmation";
                     String bodyText = String.format(
                             "Hello %s,<br><br>Thank you for your reservation!<br>" +
@@ -95,11 +82,10 @@ public class ReservationController {
                             reservedStalls.stream().map(Stall::getName).collect(Collectors.joining(", "))
                     );
 
+                try {
                     mailService.sendEmailWithQRCode(user.getEmail(), subject, bodyText, qrBytes);
-
                 } catch (Exception e) {
                     System.err.println("Failed to send email: " + e.getMessage());
-                    // Optional: continue without failing reservation
                 }
             }
 

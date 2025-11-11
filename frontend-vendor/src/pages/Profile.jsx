@@ -269,22 +269,30 @@ export default function Profile() {
         ) : (
           <ul className="space-y-3">
             {reservations.map((res) => (
-              <li
-                key={res.id}
-                className="flex justify-between items-center p-3 bg-gray-700 rounded"
+            <li
+              key={res.id}
+              className="flex flex-col justify-between items-start p-3 bg-gray-700 rounded"
+            >
+              <span className="mb-1 font-semibold">Reservation #{res.id} - {new Date(res.reservedAt).toLocaleString()}</span>
+              <ul className="ml-4 mb-2">
+                {res.stalls?.length > 0 ? (
+                  res.stalls.map((stall) => (
+                    <li key={stall.id}>
+                      {stall.name} ({stall.size})
+                    </li>
+                  ))
+                ) : (
+                  <li>No stalls reserved</li>
+                )}
+              </ul>
+              <button
+                onClick={() => handleCancelReservation(res.id)}
+                className="px-3 py-1 bg-red-500 hover:bg-red-600 rounded"
               >
-                <span>
-                  {res.stall.name} ({res.stall.size}) -{" "}
-                  {new Date(res.reservedAt).toLocaleString()}
-                </span>
-                <button
-                  onClick={() => handleCancelReservation(res.id)}
-                  className="px-3 py-1 bg-red-500 hover:bg-red-600 rounded"
-                >
-                  Cancel
-                </button>
-              </li>
-            ))}
+                Cancel
+              </button>
+            </li>
+          ))}
           </ul>
         )}
       </div>

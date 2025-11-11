@@ -27,7 +27,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private Role role = Role.EXHIBITOR; // ✅ Default role
+    private Role role = Role.EXHIBITOR;
 
     public enum Role {
         ADMIN,
