@@ -5,6 +5,7 @@ import UserTable from '../components/users/UserTable.jsx';
 import UserRoleEditor from '../components/users/UserRoleEditor.jsx';
 import Modal from '../components/common/Modal.jsx';
 import Pagination from '../components/common/Pagination.jsx';
+import Skeleton from '../components/common/Skeleton.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 
 const ITEMS_PER_PAGE = 10;
@@ -86,7 +87,7 @@ export default function UsersPage() {
         </select>
       </div>
       {isLoading ? (
-        <p>Loading users...</p>
+        <Skeleton variant="table" rows={10} columns={4} />
       ) : (
         <>
           <UserTable users={paginatedUsers} onRowClick={(user) => setEditUser(user)} />

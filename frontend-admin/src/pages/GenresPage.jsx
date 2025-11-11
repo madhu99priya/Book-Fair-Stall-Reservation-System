@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import genresService from '../services/genresService.js';
 import GenreForm from '../components/genres/GenreForm.jsx';
 import GenreTable from '../components/genres/GenreTable.jsx';
+import Skeleton from '../components/common/Skeleton.jsx';
 
 export default function GenresPage() {
   const [editGenre, setEditGenre] = React.useState(null);
@@ -67,7 +68,7 @@ export default function GenresPage() {
         }}
       />
       {isLoading ? (
-        <p>Loading...</p>
+        <Skeleton variant="table" rows={6} columns={3} />
       ) : (
         <>
           <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import reservationsService from '../services/reservationsService.js';
 import stallsService from '../services/stallsService.js';
 import usersService from '../services/usersService.js';
-import Spinner from '../components/common/Spinner.jsx';
+import { SkeletonCard } from '../components/common/Skeleton.jsx';
 
 export default function DashboardPage() {
   const resQ = useQuery({
@@ -19,7 +19,7 @@ export default function DashboardPage() {
     queryFn: () => usersService.list({ limit: 5 })
   });
 
-  if (resQ.isLoading || stallsQ.isLoading || usersQ.isLoading) return <Spinner />;
+  const isLoading = resQ.isLoading || stallsQ.isLoading || usersQ.isLoading;
 
   const totalStalls = stallsQ.data?.length || 0;
   const reservedCount = stallsQ.data?.filter((s) => s.status === 'RESERVED').length || 0;
@@ -30,7 +30,14 @@ export default function DashboardPage() {
   return (
     <div>
       <h1>Dashboard</h1>
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+      {isLoading ? (
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
         <Stat 
           title="Total Stalls" 
           value={totalStalls} 
@@ -70,7 +77,9 @@ export default function DashboardPage() {
           color="#06b6d4"
           trend={8}
         />
-      </div>
+        </div>
+      )}
+      {!isLoading && (
       <section>
         <h2 style={{ marginTop: '1.5rem' }}>Recent Reservations</h2>
         <ul style={{ background: '#fff', padding: '1rem', borderRadius: 8 }}>
@@ -81,6 +90,7 @@ export default function DashboardPage() {
           ))}
         </ul>
       </section>
+      )}
     </div>
   );
 }
