@@ -4,12 +4,16 @@ import usersService from '../services/usersService.js';
 import UserTable from '../components/users/UserTable.jsx';
 import UserRoleEditor from '../components/users/UserRoleEditor.jsx';
 import Modal from '../components/common/Modal.jsx';
+import Pagination from '../components/common/Pagination.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+
+const ITEMS_PER_PAGE = 10;
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
   const [editUser, setEditUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const queryClient = useQueryClient();
   const { addToast } = useToast();
   
@@ -37,6 +41,15 @@ export default function UsersPage() {
     const matchesRole = roleFilter === 'ALL' || user.roles?.includes(roleFilter);
     return matchesSearch && matchesRole;
   });
+
+  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedUsers = filteredUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, roleFilter]);
 
   return (
     <div>
@@ -76,10 +89,16 @@ export default function UsersPage() {
         <p>Loading users...</p>
       ) : (
         <>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>
-            Showing {filteredUsers.length} of {users.length} users
-          </p>
-          <UserTable users={filteredUsers} onRowClick={(user) => setEditUser(user)} />
+          <UserTable users={paginatedUsers} onRowClick={(user) => setEditUser(user)} />
+          {filteredUsers.length > ITEMS_PER_PAGE && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              itemsPerPage={ITEMS_PER_PAGE}
+              totalItems={filteredUsers.length}
+            />
+          )}
         </>
       )}
       <Modal
