@@ -6,6 +6,7 @@ import { Menu, X, BookOpen } from "lucide-react";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -21,6 +22,29 @@ export default function Navbar() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Detect active section
+  useEffect(() => {
+    const handleScrollSpy = () => {
+      const sections = ["home", "about", "events", "registration", "contact"];
+      const navbarHeight = 80;
+
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= navbarHeight + 100 && rect.bottom >= navbarHeight) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScrollSpy);
+    handleScrollSpy(); // Call once on mount
+    return () => window.removeEventListener("scroll", handleScrollSpy);
   }, []);
 
   const scrollToSection = (id) => {
@@ -61,8 +85,31 @@ export default function Navbar() {
     }
   };
 
-  const linkClasses =
-    "cursor-pointer px-4 py-2 rounded-lg text-cyan-300 font-medium hover:text-cyan-100 hover:bg-cyan-500/20 transition-all duration-300";
+  const getLinkClasses = (sectionId) => {
+    const baseClasses =
+      "cursor-pointer px-4 py-2 rounded-lg font-medium transition-all duration-300 relative";
+    const activeClasses =
+      "text-cyan-100 bg-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.4)]";
+    const inactiveClasses =
+      "text-cyan-300 hover:text-cyan-100 hover:bg-cyan-500/20";
+
+    return `${baseClasses} ${
+      activeSection === sectionId ? activeClasses : inactiveClasses
+    }`;
+  };
+
+  const getMobileLinkClasses = (sectionId) => {
+    const baseClasses =
+      "block w-full text-left px-6 py-4 rounded-xl font-medium border transition-all duration-300 relative";
+    const activeClasses =
+      "bg-cyan-500/30 text-cyan-100 border-cyan-400/50 shadow-[0_0_15px_rgba(6,182,212,0.4)]";
+    const inactiveClasses =
+      "bg-black/40 hover:bg-cyan-500/20 text-cyan-300 hover:text-cyan-100 border-cyan-500/20 hover:border-cyan-400/50";
+
+    return `${baseClasses} ${
+      activeSection === sectionId ? activeClasses : inactiveClasses
+    }`;
+  };
 
   return (
     <>
@@ -112,9 +159,13 @@ export default function Navbar() {
                   <button
                     key={id}
                     onClick={() => scrollToSection(id)}
-                    className={linkClasses}
+                    className={getLinkClasses(id)}
                   >
                     {id.charAt(0).toUpperCase() + id.slice(1)}
+                    {/* Active underline indicator - moved higher with bottom-1 */}
+                    {activeSection === id && (
+                      <span className="absolute bottom-2 left-1/2 -translate-x-1/2 w-3/4 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span>
+                    )}
                   </button>
                 )
               )}
@@ -146,16 +197,20 @@ export default function Navbar() {
           ></div>
 
           {/* Mobile Menu Panel */}
-          <nav className="fixed top-24 left-4 right-4 z-50 md:hidden bg-gradient-to-br from-black/95 via-cyan-950/40 to-black/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl shadow-[0_0_60px_rgba(6,182,212,0.3)]">
+          <nav className="fixed top-24 left-4 right-4 z-50 md:hidden bg-gradient-to-br from-black/95 via-cyan-950/40 to-black/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl shadow-[0_0_30px_rgba(6,182,212,0.3)]">
             <div className="p-6 space-y-3">
               {["home", "about", "events", "registration", "contact"].map(
                 (id) => (
                   <button
                     key={id}
                     onClick={() => scrollToSection(id)}
-                    className="block w-full text-left px-6 py-4 rounded-xl bg-black/40 hover:bg-cyan-500/20 text-cyan-300 font-medium hover:text-cyan-100 border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 shadow-lg hover:shadow-cyan-500/20"
+                    className={getMobileLinkClasses(id)}
                   >
                     {id.charAt(0).toUpperCase() + id.slice(1)}
+                    {/* Active underline indicator for mobile - moved higher with bottom-3 */}
+                    {activeSection === id && (
+                      <span className="absolute bottom-3 left-6 right-6 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span>
+                    )}
                   </button>
                 )
               )}
