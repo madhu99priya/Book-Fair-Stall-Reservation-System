@@ -1,15 +1,33 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import usersService from '../services/usersService.js';
 import UserTable from '../components/users/UserTable.jsx';
+import UserRoleEditor from '../components/users/UserRoleEditor.jsx';
+import Modal from '../components/common/Modal.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('ALL');
+  const [editUser, setEditUser] = useState(null);
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
   
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: () => usersService.list()
+  });
+
+  const updateRolesMutation = useMutation({
+    mutationFn: ({ userId, roles }) => usersService.updateRoles(userId, roles),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setEditUser(null);
+      addToast('User roles updated successfully', 'success');
+    },
+    onError: () => {
+      addToast('Failed to update user roles', 'error');
+    }
   });
 
   const filteredUsers = users.filter((user) => {
@@ -61,9 +79,21 @@ export default function UsersPage() {
           <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>
             Showing {filteredUsers.length} of {users.length} users
           </p>
-          <UserTable users={filteredUsers} />
+          <UserTable users={filteredUsers} onRowClick={(user) => setEditUser(user)} />
         </>
       )}
+      <Modal
+        open={!!editUser}
+        title="Edit User Roles"
+        onClose={() => setEditUser(null)}
+      >
+        <UserRoleEditor
+          user={editUser}
+          onSave={(roles) => updateRolesMutation.mutate({ userId: editUser.id, roles })}
+          onCancel={() => setEditUser(null)}
+          isLoading={updateRolesMutation.isPending}
+        />
+      </Modal>
     </div>
   );
 }
