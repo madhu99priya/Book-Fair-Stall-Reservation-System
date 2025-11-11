@@ -12,6 +12,7 @@ export default function StallsPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editStall, setEditStall] = useState(null);
+  const [deleteStall, setDeleteStall] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: stalls = [], isLoading } = useQuery({
@@ -32,6 +33,14 @@ export default function StallsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stalls'] });
       setEditStall(null);
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => stallsService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['stalls'] });
+      setDeleteStall(null);
     }
   });
 
@@ -90,7 +99,11 @@ export default function StallsPage() {
           </div>
 
           <h2 style={{ marginTop: '2rem' }}>All Stalls</h2>
-          <StallList stalls={stalls} onEdit={(stall) => setEditStall(stall)} />
+          <StallList 
+            stalls={stalls} 
+            onEdit={(stall) => setEditStall(stall)}
+            onDelete={(stall) => setDeleteStall(stall)}
+          />
         </>
       )}
       <ConfirmDialog
@@ -122,6 +135,12 @@ export default function StallsPage() {
           isLoading={updateMutation.isPending}
         />
       </Modal>
+      <ConfirmDialog
+        open={!!deleteStall}
+        message={`Are you sure you want to delete stall "${deleteStall?.name}"? This action cannot be undone.`}
+        onCancel={() => setDeleteStall(null)}
+        onConfirm={() => deleteMutation.mutate(deleteStall.id)}
+      />
     </div>
   );
 }
