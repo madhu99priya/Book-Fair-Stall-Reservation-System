@@ -470,6 +470,7 @@ export default function Home() {
           <section
             id="contact"
             className="min-h-screen flex flex-col items-center justify-center text-center px-4 relative z-10"
+            style={{ marginBottom: "80px" }}
           >
             <div className="relative z-10 max-w-4xl w-full">
               <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">
@@ -487,10 +488,13 @@ export default function Home() {
                     <h3 className="text-xl font-bold text-cyan-400 mb-3">
                       Email
                     </h3>
-                    <p className="text-gray-400 text-lg mb-2">
+                    <a
+                      href="mailto:srilankabookpublishers@gmail.com"
+                      className="text-gray-400 text-lg mb-2"
+                    >
                       srilankabookpublishers@gmail.com
-                    </p>
-                    <p className="text-gray-500 text-xs">
+                    </a>
+                    <p className="text-gray-500 text-xs mt-1">
                       We'll respond within 24 hours
                     </p>
                   </div>
@@ -500,8 +504,13 @@ export default function Home() {
                     <h3 className="text-xl font-bold text-blue-400 mb-3">
                       Phone
                     </h3>
-                    <p className="text-gray-400 text-lg mb-2">+94 11 2785480</p>
-                    <p className="text-gray-500 text-xs">
+                    <a
+                      href="tel:+94112785480"
+                      className="text-gray-400 text-lg mb-2"
+                    >
+                      +94 11 2785480
+                    </a>
+                    <p className="text-gray-500 text-xs mt-1">
                       Mon - Fri: 9:00 AM - 5:00 PM
                     </p>
                   </div>
@@ -636,13 +645,6 @@ export default function Home() {
                   <div className="absolute top-0 right-0 w-20 h-20 bg-purple-500/20 rounded-bl-full blur-2xl"></div>
                   <div className="absolute bottom-0 left-0 w-20 h-20 bg-cyan-500/20 rounded-tr-full blur-2xl"></div>
                 </div>
-              </div>
-
-              <div className="text-gray-500 text-sm space-y-2 mt-8">
-                <p>© 2025 Colombo International Book Fair</p>
-                <p className="text-cyan-400/60">
-                  Powered by Innovation & Imagination
-                </p>
               </div>
             </div>
           </section>
