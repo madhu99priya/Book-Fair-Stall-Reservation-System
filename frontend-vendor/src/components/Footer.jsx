@@ -83,7 +83,7 @@ const Footer = () => {
               Book Fair
             </h3>
             <div className="flex items-center gap-2 text-gray-400 mt-3 group-hover:text-cyan-300 transition-colors">
-              <MapPin className="w-4 h-4 text-cyan-500" />
+              <MapPin className="w-4 h-4 text-cyan-500 group-hover:text-red-500 transition-colors" />
               <span className="text-sm">Colombo - Sri Lanka</span>
             </div>
           </div>
