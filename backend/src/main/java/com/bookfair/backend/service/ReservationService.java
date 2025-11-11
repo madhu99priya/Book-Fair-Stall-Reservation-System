@@ -19,21 +19,27 @@ public class ReservationService {
     private final StallRepository stallRepository;
 
     // Create a new reservation
-    public Reservation createReservation(User user, Long stallId) {
+    public Reservation createReservation(User user, List<Long> stallIds) {
 
-        Stall stall = stallRepository.findById(stallId)
-                .orElseThrow(() -> new RuntimeException("Stall not found"));
+        List<Stall> stalls = stallRepository.findAllById(stallIds);
 
-        if (stall.isBooked()) {
-            throw new RuntimeException("Stall is already booked");
+        if (stalls.size() != stallIds.size()) {
+            throw new RuntimeException("One or more stalls not found");
         }
 
-        stall.setBooked(true);
-        stallRepository.save(stall);
+        // Check if any stall is already booked
+        for (Stall stall : stalls) {
+            if (stall.isBooked()) {
+                throw new RuntimeException("Stall " + stall.getName() + " is already booked");
+            }
+            // Mark stall as booked
+            stall.setBooked(true);
+            stallRepository.save(stall);
+        }
 
         Reservation reservation = Reservation.builder()
                 .user(user)
-                .stall(stall)
+                .stalls(stalls)
                 .reservedAt(LocalDateTime.now())
                 .build();
 
@@ -59,9 +65,10 @@ public class ReservationService {
             throw new RuntimeException("You are not authorized to cancel this reservation");
         }
         // Free up the stall
-        Stall stall = reservation.getStall();
-        stall.setBooked(false);
-        stallRepository.save(stall);
+        for (Stall stall : reservation.getStalls()) {
+            stall.setBooked(false);
+            stallRepository.save(stall);
+        }
 
         reservationRepository.deleteById(reservationId);
     }

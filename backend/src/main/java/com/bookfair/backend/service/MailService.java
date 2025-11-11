@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 @Service
 public class MailService {
@@ -23,6 +24,7 @@ public class MailService {
      * @param qrBytes QR code as byte array (PNG)
      * @throws MessagingException
      */
+    @Async
     public void sendEmailWithQRCode(String toEmail, String subject, String text, byte[] qrBytes) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         // true = multipart

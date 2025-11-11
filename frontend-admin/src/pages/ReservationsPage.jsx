@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import reservationsService from '../services/reservationsService.js';
 import ReservationTable from '../components/reservations/ReservationTable.jsx';
 import Modal from '../components/common/Modal.jsx';
+import Skeleton from '../components/common/Skeleton.jsx';
 
 export default function ReservationsPage() {
   const { data: reservations = [], isLoading } = useQuery({
@@ -101,7 +102,7 @@ export default function ReservationsPage() {
         </select>
       </div>
       {isLoading ? (
-        <p>Loading...</p>
+        <Skeleton variant="table" rows={8} columns={5} />
       ) : (
         <>
           <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>

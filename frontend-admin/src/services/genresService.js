@@ -6,7 +6,11 @@ const genresService = {
     return data;
   },
   async create(payload) {
-    const { data } = await apiClient.post('/genres', payload);
+    const { data} = await apiClient.post('/genres', payload);
+    return data;
+  },
+  async update(id, payload) {
+    const { data } = await apiClient.put(`/genres/${id}`, payload);
     return data;
   },
   async remove(id) {
