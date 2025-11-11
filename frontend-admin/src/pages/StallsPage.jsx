@@ -11,6 +11,7 @@ export default function StallsPage() {
   const [selected, setSelected] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editStall, setEditStall] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: stalls = [], isLoading } = useQuery({
@@ -23,6 +24,14 @@ export default function StallsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stalls'] });
       setCreateModalOpen(false);
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => stallsService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['stalls'] });
+      setEditStall(null);
     }
   });
 
@@ -81,7 +90,7 @@ export default function StallsPage() {
           </div>
 
           <h2 style={{ marginTop: '2rem' }}>All Stalls</h2>
-          <StallList stalls={stalls} />
+          <StallList stalls={stalls} onEdit={(stall) => setEditStall(stall)} />
         </>
       )}
       <ConfirmDialog
@@ -99,6 +108,18 @@ export default function StallsPage() {
           onSubmit={(data) => createMutation.mutate(data)}
           onCancel={() => setCreateModalOpen(false)}
           isLoading={createMutation.isPending}
+        />
+      </Modal>
+      <Modal
+        open={!!editStall}
+        title="Edit Stall"
+        onClose={() => setEditStall(null)}
+      >
+        <StallForm
+          stall={editStall}
+          onSubmit={(data) => updateMutation.mutate({ id: editStall.id, data })}
+          onCancel={() => setEditStall(null)}
+          isLoading={updateMutation.isPending}
         />
       </Modal>
     </div>
