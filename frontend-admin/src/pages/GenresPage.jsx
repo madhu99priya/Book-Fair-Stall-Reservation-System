@@ -6,11 +6,16 @@ import GenreTable from '../components/genres/GenreTable.jsx';
 
 export default function GenresPage() {
   const [editGenre, setEditGenre] = React.useState(null);
+  const [searchTerm, setSearchTerm] = React.useState('');
   const queryClient = useQueryClient();
   const { data: genres = [], isLoading } = useQuery({
     queryKey: ['genres'],
     queryFn: () => genresService.list()
   });
+
+  const filteredGenres = genres.filter((genre) =>
+    searchTerm === '' || genre.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const createMutation = useMutation({
     mutationFn: (payload) => genresService.create(payload),
@@ -47,14 +52,33 @@ export default function GenresPage() {
         genre={editGenre}
         onCancel={() => setEditGenre(null)}
       />
+      <input
+        type="text"
+        placeholder="Search genres..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        style={{
+          width: '100%',
+          padding: '0.5rem',
+          border: '1px solid #e2e8f0',
+          borderRadius: '4px',
+          fontSize: '0.875rem',
+          marginBottom: '1rem'
+        }}
+      />
       {isLoading ? (
         <p>Loading...</p>
       ) : (
-        <GenreTable
-          genres={genres}
-          onDelete={(id) => deleteMutation.mutate(id)}
-          onEdit={(genre) => setEditGenre(genre)}
-        />
+        <>
+          <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>
+            Showing {filteredGenres.length} of {genres.length} genres
+          </p>
+          <GenreTable
+            genres={filteredGenres}
+            onDelete={(id) => deleteMutation.mutate(id)}
+            onEdit={(genre) => setEditGenre(genre)}
+          />
+        </>
       )}
     </div>
   );
