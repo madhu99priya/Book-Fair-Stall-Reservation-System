@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import reservationsService from '../services/reservationsService.js';
 import ReservationTable from '../components/reservations/ReservationTable.jsx';
 import Modal from '../components/common/Modal.jsx';
 import Skeleton from '../components/common/Skeleton.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 
 export default function ReservationsPage() {
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
   const { data: reservations = [], isLoading } = useQuery({
     queryKey: ['reservations'],
     queryFn: () => reservationsService.list()
@@ -13,6 +16,18 @@ export default function ReservationsPage() {
   const [activeReservation, setActiveReservation] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+
+  const cancelMutation = useMutation({
+    mutationFn: (id) => reservationsService.cancel(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reservations'] });
+      setActiveReservation(null);
+      addToast('Reservation cancelled successfully', 'success');
+    },
+    onError: () => {
+      addToast('Failed to cancel reservation', 'error');
+    }
+  });
 
   const filteredReservations = reservations.filter((reservation) => {
     const matchesSearch = searchTerm === '' || 
@@ -121,6 +136,23 @@ export default function ReservationsPage() {
       >
         {activeReservation && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {activeReservation.qrCodeBase64 && (
+              <div style={{ 
+                padding: '1rem', 
+                background: '#f8fafc', 
+                borderRadius: '6px',
+                border: '1px solid #e2e8f0',
+                textAlign: 'center'
+              }}>
+                <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: '#1e293b' }}>QR Code</h3>
+                <img 
+                  src={`data:image/png;base64,${activeReservation.qrCodeBase64}`} 
+                  alt="Reservation QR Code"
+                  style={{ maxWidth: '200px', height: 'auto' }}
+                />
+              </div>
+            )}
+            
             <div style={{ 
               padding: '1rem', 
               background: '#f8fafc', 
@@ -190,6 +222,33 @@ export default function ReservationsPage() {
                   <strong>Last Updated:</strong> {new Date(activeReservation.updatedAt).toLocaleString()}
                 </p>
               )}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <button
+                onClick={() => setActiveReservation(null)}
+                style={{
+                  background: '#fff',
+                  color: '#374151',
+                  border: '1px solid #d1d5db'
+                }}
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to cancel this reservation?')) {
+                    cancelMutation.mutate(activeReservation.id);
+                  }
+                }}
+                disabled={cancelMutation.isPending}
+                style={{
+                  background: '#ef4444',
+                  border: '1px solid #ef4444'
+                }}
+              >
+                {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Reservation'}
+              </button>
             </div>
           </div>
         )}
