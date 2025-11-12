@@ -35,7 +35,4 @@ public class Reservation {
 
     private LocalDateTime reservedAt;
 
-    @Column(name = "qr_code_base64", columnDefinition = "TEXT")
-    private String qrCodeBase64;
-
 }
