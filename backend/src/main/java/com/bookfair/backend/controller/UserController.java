@@ -31,7 +31,19 @@ public class UserController {
         User user = userService.getUserByEmail(request.email());
         return new LoginResponse(token, user);
     }
-    
+
+    @PostMapping("/admin/login")
+    public ResponseEntity<LoginResponse> adminLogin(@RequestBody LoginRequest request) {
+        String token = userService.login(request.email(), request.password());
+        User user = userService.getUserByEmail(request.email());
+
+        if (user.getRole() != User.Role.ADMIN) {
+            return ResponseEntity.status(403).body(null);
+        }
+
+        return ResponseEntity.ok(new LoginResponse(token, user));
+    }
+
     // Get all users
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")

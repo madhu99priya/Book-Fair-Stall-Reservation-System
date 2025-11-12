@@ -38,10 +38,20 @@ public class ReservationController {
         Map<String, Object> response = new HashMap<>();
         try {
             List<Long> stallIds = body.get("stallIds");
+            if (stallIds == null || stallIds.isEmpty()) {
+                response.put("error", "No stalls selected");
+                return ResponseEntity.badRequest().body(response);
+            }
             User user = userService.getUserByEmail(authentication.getName());
 
-            // Create a single reservation for multiple stalls
-            Reservation reservation = reservationService.createReservation(user, stallIds);
+            // Create reservation via service (enforces max 3 stalls)
+            Reservation reservation;
+            try {
+                reservation = reservationService.createReservation(user, stallIds);
+            } catch (RuntimeException ex) {
+                response.put("error", ex.getMessage());
+                return ResponseEntity.badRequest().body(response);
+            }
 
             // Reserved stalls
             List<Stall> reservedStalls = reservation.getStalls();

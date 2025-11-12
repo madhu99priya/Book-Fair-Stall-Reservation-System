@@ -1,3 +1,5 @@
+// StallsPage.jsx
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import stallsService from '../services/stallsService.js';

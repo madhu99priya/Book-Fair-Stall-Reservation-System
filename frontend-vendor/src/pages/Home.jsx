@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import emailjs from "@emailjs/browser";
+//import emailjs from "@emailjs/browser";
 import Navbar from "../components/Navbar";
 import EventCarousel from "../components/EventCarousel";
 import AboutCarousel from "../components/AboutCarousel";

@@ -1,3 +1,5 @@
+// StallMapScene.jsx
+
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Text } from "@react-three/drei";
@@ -36,19 +38,23 @@ export default function StallMapScene({
   stalls,
   selectedStalls,
   setSelectedStalls,
-  maxSelection = 3,
+  userBookedStalls = [],
+  remainingLimit = 3,
 }) {
   const handleSelect = (stall) => {
     const isSelected = selectedStalls.find((s) => s.id === stall.id);
+
     if (isSelected) {
       setSelectedStalls(selectedStalls.filter((s) => s.id !== stall.id));
-    } else {
-      if (selectedStalls.length >= maxSelection) {
-        alert(`You can select at most ${maxSelection} stalls.`);
-        return;
-      }
-      setSelectedStalls([...selectedStalls, stall]);
+      return;
     }
+
+    if (selectedStalls.length >= remainingLimit) {
+      alert("A user can purchase only 3 stalls");
+      return;
+    }
+
+    setSelectedStalls([...selectedStalls, stall]);
   };
 
   return (
@@ -72,6 +78,7 @@ export default function StallMapScene({
           stall={stall}
           selected={selectedStalls.find((s) => s.id === stall.id)}
           onSelect={handleSelect}
+          disabled={userBookedStalls.includes(stall.id)}
         />
       ))}
       <OrbitControls enableZoom />

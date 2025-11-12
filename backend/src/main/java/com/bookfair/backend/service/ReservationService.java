@@ -18,8 +18,16 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final StallRepository stallRepository;
 
+    private static final int MAX_STALLS_PER_USER = 3;
+
     // Create a new reservation
     public Reservation createReservation(User user, List<Long> stallIds) {
+        
+        // Count how many stalls this user has already booked
+        Long existingStalls = reservationRepository.countStallsByUser(user);
+        if (existingStalls + stallIds.size() > MAX_STALLS_PER_USER) {
+            throw new RuntimeException("You cannot book more than " + MAX_STALLS_PER_USER + " stalls in total.");
+        }
 
         List<Stall> stalls = stallRepository.findAllById(stallIds);
 
@@ -34,8 +42,8 @@ public class ReservationService {
             }
             // Mark stall as booked
             stall.setBooked(true);
-            stallRepository.save(stall);
         }
+        stallRepository.saveAll(stalls);
 
         Reservation reservation = Reservation.builder()
                 .user(user)

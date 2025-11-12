@@ -3,7 +3,7 @@ import { useAuth } from '../../hooks/useAuth.js';
 
 export default function LoginForm() {
   const { login } = useAuth();
-  const [form, setForm] = useState({ username: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -16,7 +16,7 @@ export default function LoginForm() {
     setLoading(true);
     setError(null);
     try {
-      await login(form.username, form.password);
+      await login(form.email, form.password);
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     } finally {
@@ -29,11 +29,12 @@ export default function LoginForm() {
       <h1>Admin Login</h1>
       {error && <div className="error-box">{error}</div>}
       <label>
-        Username
+        Email
         <input
-          name="username"
-            autoComplete="username"
-          value={form.username}
+          name="email"
+          type="email"
+          autoComplete="email"
+          value={form.email}
           onChange={handleChange}
           required
         />
