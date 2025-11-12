@@ -1,15 +1,14 @@
-import React from 'react';
 import DataTable from '../common/DataTable.jsx';
 
 export default function UserTable({ users, onRowClick }) {
   const columns = [
     { key: 'id', title: 'ID' },
-    { key: 'username', title: 'Username' },
+    { key: 'fullName', title: 'Full Name' },
     { key: 'email', title: 'Email' },
     {
-      key: 'roles',
+      key: 'role',
       title: 'Roles',
-      render: (val) => (Array.isArray(val) ? val.join(', ') : '')
+      render: (val) => val || '—'
     }
   ];
 

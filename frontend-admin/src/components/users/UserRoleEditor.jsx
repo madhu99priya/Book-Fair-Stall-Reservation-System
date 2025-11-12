@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
 
-const AVAILABLE_ROLES = ['ADMIN', 'VENDOR', 'USER'];
+const AVAILABLE_ROLES = ['ADMIN', 'EXHIBITOR'];
 
 export default function UserRoleEditor({ user, onSave, onCancel, isLoading }) {
-  const [selectedRoles, setSelectedRoles] = useState([]);
+  const [selectedRole, setSelectedRole] = useState('');
 
   useEffect(() => {
-    if (user?.roles) {
-      setSelectedRoles(user.roles);
+    if (user?.role) {
+      setSelectedRole(user.role);
     }
   }, [user]);
 
-  const toggleRole = (role) => {
-    setSelectedRoles((prev) =>
-      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
-    );
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(selectedRoles);
+    if (selectedRole) {
+      onSave(selectedRole);
+    }
   };
 
   return (
@@ -27,7 +23,7 @@ export default function UserRoleEditor({ user, onSave, onCancel, isLoading }) {
       <div>
         <p style={{ marginBottom: '0.5rem', fontWeight: '500' }}>User Information:</p>
         <p style={{ fontSize: '0.875rem', margin: '0.25rem 0' }}>
-          <strong>Username:</strong> {user?.username}
+          <strong>Full Name:</strong> {user?.fullName}
         </p>
         <p style={{ fontSize: '0.875rem', margin: '0.25rem 0' }}>
           <strong>Email:</strong> {user?.email}
@@ -35,7 +31,7 @@ export default function UserRoleEditor({ user, onSave, onCancel, isLoading }) {
       </div>
 
       <div>
-        <p style={{ marginBottom: '0.5rem', fontWeight: '500' }}>Assign Roles:</p>
+        <p style={{ marginBottom: '0.5rem', fontWeight: '500' }}>Assign Role:</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {AVAILABLE_ROLES.map((role) => (
             <label
@@ -48,13 +44,15 @@ export default function UserRoleEditor({ user, onSave, onCancel, isLoading }) {
                 border: '1px solid #e2e8f0',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                background: selectedRoles.includes(role) ? '#f0f9ff' : '#fff'
+                background: selectedRole === role ? '#f0f9ff' : '#fff'
               }}
             >
               <input
-                type="checkbox"
-                checked={selectedRoles.includes(role)}
-                onChange={() => toggleRole(role)}
+                type="radio"
+                name="role"
+                value={role}
+                checked={selectedRole === role}
+                onChange={() => setSelectedRole(role)}
                 style={{ cursor: 'pointer' }}
               />
               <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>{role}</span>
@@ -80,17 +78,17 @@ export default function UserRoleEditor({ user, onSave, onCancel, isLoading }) {
         </button>
         <button
           type="submit"
-          disabled={isLoading || selectedRoles.length === 0}
+          disabled={isLoading || !selectedRole}
           style={{
             padding: '0.5rem 1rem',
             border: 'none',
             borderRadius: '4px',
-            background: selectedRoles.length > 0 ? '#3b82f6' : '#cbd5e1',
+            background: selectedRole ? '#3b82f6' : '#cbd5e1',
             color: '#fff',
-            cursor: selectedRoles.length > 0 ? 'pointer' : 'not-allowed'
+            cursor: selectedRole ? 'pointer' : 'not-allowed'
           }}
         >
-          {isLoading ? 'Saving...' : 'Save Roles'}
+          {isLoading ? 'Saving...' : 'Save Role'}
         </button>
       </div>
     </form>

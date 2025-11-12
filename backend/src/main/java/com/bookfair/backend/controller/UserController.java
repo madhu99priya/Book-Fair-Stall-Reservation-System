@@ -90,6 +90,19 @@ public class UserController {
         return userService.updateUser(updatedData);
     }
 
+    @PutMapping("/{id}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<User> updateUserRole(
+            @PathVariable Long id,
+            @RequestBody RoleUpdateRequest request
+    ) {
+        User updatedUser = userService.updateUserRole(id, request.role());
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    record RoleUpdateRequest(User.Role role) {}
+
+
     @PutMapping("/change-password")
     public ResponseEntity<Void> changePassword(@RequestBody PasswordChangeRequest request, Authentication auth) {
         userService.changePassword(auth.getName(), request.oldPassword(), request.newPassword());

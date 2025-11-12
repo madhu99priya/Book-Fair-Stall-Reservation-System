@@ -5,8 +5,8 @@ const usersService = {
     const { data } = await apiClient.get('/users', { params });
     return data;
   },
-  async updateRoles(userId, roles) {
-    const { data } = await apiClient.put(`/users/${userId}/roles`, { roles });
+  async updateRole(userId, role) {
+    const { data } = await apiClient.put(`/users/${userId}/role`, { role });
     return data;
   }
 };

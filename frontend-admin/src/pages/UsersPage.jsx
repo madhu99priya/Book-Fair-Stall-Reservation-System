@@ -23,8 +23,8 @@ export default function UsersPage() {
     queryFn: () => usersService.list()
   });
 
-  const updateRolesMutation = useMutation({
-    mutationFn: ({ userId, roles }) => usersService.updateRoles(userId, roles),
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ userId, role }) => usersService.updateRole(userId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       setEditUser(null);
@@ -37,9 +37,9 @@ export default function UsersPage() {
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch = searchTerm === '' ||
-      user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === 'ALL' || user.roles?.includes(roleFilter);
+    const matchesRole = roleFilter === 'ALL' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
 
@@ -82,8 +82,7 @@ export default function UsersPage() {
         >
           <option value="ALL">All Roles</option>
           <option value="ADMIN">Admin</option>
-          <option value="VENDOR">Vendor</option>
-          <option value="USER">User</option>
+          <option value="EXHIBITOR">Vendor</option>
         </select>
       </div>
       {isLoading ? (
@@ -109,9 +108,9 @@ export default function UsersPage() {
       >
         <UserRoleEditor
           user={editUser}
-          onSave={(roles) => updateRolesMutation.mutate({ userId: editUser.id, roles })}
+          onSave={(role) => updateRoleMutation.mutate({ userId: editUser.id, role })}
           onCancel={() => setEditUser(null)}
-          isLoading={updateRolesMutation.isPending}
+          isLoading={updateRoleMutation.isPending}
         />
       </Modal>
     </div>
