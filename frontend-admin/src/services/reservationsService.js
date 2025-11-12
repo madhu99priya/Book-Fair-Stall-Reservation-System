@@ -8,6 +8,10 @@ const reservationsService = {
   async details(id) {
     const { data } = await apiClient.get(`/reservations/${id}`);
     return data;
+  },
+  async cancel(id) {
+    const { data } = await apiClient.delete(`/reservations/${id}`);
+    return data;
   }
 };
 

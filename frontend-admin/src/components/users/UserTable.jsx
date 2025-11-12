@@ -4,12 +4,12 @@ import DataTable from '../common/DataTable.jsx';
 export default function UserTable({ users, onRowClick }) {
   const columns = [
     { key: 'id', title: 'ID' },
-    { key: 'username', title: 'Username' },
+    { key: 'fullName', title: 'Full Name' },
     { key: 'email', title: 'Email' },
     {
-      key: 'roles',
-      title: 'Roles',
-      render: (val) => (Array.isArray(val) ? val.join(', ') : '')
+      key: 'role',
+      title: 'Role',
+      render: (val) => val || 'N/A'
     }
   ];
 
