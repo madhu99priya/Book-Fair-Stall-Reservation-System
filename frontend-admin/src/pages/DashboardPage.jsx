@@ -22,7 +22,7 @@ export default function DashboardPage() {
   const isLoading = resQ.isLoading || stallsQ.isLoading || usersQ.isLoading;
 
   const totalStalls = stallsQ.data?.length || 0;
-  const reservedCount = stallsQ.data?.filter((s) => s.status === 'RESERVED').length || 0;
+  const reservedCount = stallsQ.data?.filter((s) => s.booked).length || 0;
 
   const availableStalls = totalStalls - reservedCount;
   const occupancyRate = totalStalls > 0 ? Math.round((reservedCount / totalStalls) * 100) : 0;

@@ -10,24 +10,34 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isInitializing, setInitializing] = useState(true);
 
+  // Decode JWT and set user on app load or token change
   useEffect(() => {
     if (token) {
       try {
         const claims = decodeJwt(token);
-        setUser({ username: claims.sub, roles: claims.roles || [] });
-      } catch {
+        // JWT should contain sub (email) and roles
+        setUser({
+          email: claims.sub,
+          roles: claims.roles || []
+        });
+      } catch (err) {
+        console.error('Failed to decode JWT:', err);
         setUser(null);
       }
+    } else {
+      setUser(null);
     }
     setInitializing(false);
   }, [token]);
 
-  const login = useCallback(async (username, password) => {
-    const jwt = await authService.login(username, password);
+  // Login function using admin-only backend route
+  const login = useCallback(async (email, password) => {
+    const jwt = await authService.login(email, password); // calls /api/users/admin/login
     storeToken(jwt);
     setToken(jwt);
   }, []);
 
+  // Logout function
   const logout = useCallback(() => {
     clearToken();
     setToken(null);

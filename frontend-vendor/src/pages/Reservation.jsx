@@ -1,3 +1,5 @@
+// Reservation.jsx
+
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
@@ -14,6 +16,8 @@ export default function Reservation() {
   const [loading, setLoading] = useState(true);
   const [confirmation, setConfirmation] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [userBookedStalls, setUserBookedStalls] = useState([]);
+  const MAX_STALLS_PER_USER = 3;
 
   // Fetch stalls
   useEffect(() => {
@@ -36,6 +40,22 @@ export default function Reservation() {
 
     fetchStalls();
   }, [user, navigate]);
+
+  // Fetch user's existing reservations
+  useEffect(() => {
+    const fetchUserReservations = async () => {
+      try {
+        const res = await axios.get("http://localhost:8081/api/reservations/me");
+        const bookedIds = res.data.flatMap(r => r.stalls.map(s => s.id));
+        setUserBookedStalls(bookedIds);
+      } catch (err) {
+        console.error("❌ Failed to fetch user reservations", err);
+      }
+    };
+    fetchUserReservations();
+  }, []);
+
+  const remainingLimit = MAX_STALLS_PER_USER - userBookedStalls.length;
 
   // Confirm reservation
   const handleConfirmReservation = async () => {
@@ -62,6 +82,11 @@ export default function Reservation() {
       const stallsRes = await axios.get("/api/stalls");
       setStalls(stallsRes.data);
 
+      // Refresh user booked stalls
+      const userRes = await axios.get("/api/reservations/me");
+      const bookedIds = userRes.data.flatMap(r => r.stalls.map(s => s.id));
+      setUserBookedStalls(bookedIds);
+
       // Clear current selection
       setSelectedStalls([]);
     } catch (err) {
@@ -80,7 +105,7 @@ export default function Reservation() {
       <Navbarauth />
       <h1 className="text-4xl font-bold mb-4">Reserve Your Stall</h1>
       <p className="text-gray-300 mb-6 text-center">
-        Select up to 3 stalls for your business.
+        Select up to {MAX_STALLS_PER_USER} stalls for your business.
       </p>
 
       <div className="w-full h-[500px] mb-6">
@@ -88,7 +113,8 @@ export default function Reservation() {
           stalls={stalls}
           selectedStalls={selectedStalls}
           setSelectedStalls={setSelectedStalls}
-          maxSelection={3}
+          userBookedStalls={userBookedStalls}
+          remainingLimit={remainingLimit}
         />
       </div>
 

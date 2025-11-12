@@ -1,3 +1,5 @@
+// User.java
+
 package com.bookfair.backend.model;
 
 import jakarta.persistence.*;

@@ -90,7 +90,7 @@ public class SecurityConfig {
                         // Public auth endpoints (choose whichever path your frontend uses)
                         .requestMatchers("/api/auth/**").permitAll()
                         // If you still use /api/users/login/register keep them too:
-                        .requestMatchers("/api/users/login", "/api/users/register").permitAll()
+                        .requestMatchers("/api/users/login", "/api/users/register", "/api/users/admin/login").permitAll()
 
                         // Example of allowing public read:
                         // .requestMatchers(HttpMethod.GET,

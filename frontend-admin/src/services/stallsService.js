@@ -18,7 +18,7 @@ const stallsService = {
     return data;
   },
   async reserve(stallIds, businessId) {
-    const { data } = await apiClient.post('/stalls/reserve', { stallIds, businessId });
+    const { data } = await apiClient.post('/reservations', { stallIds, businessId });
     return data;
   },
   async release(stallId) {
