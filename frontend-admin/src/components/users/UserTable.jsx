@@ -1,4 +1,3 @@
-import React from 'react';
 import DataTable from '../common/DataTable.jsx';
 
 export default function UserTable({ users, onRowClick }) {
@@ -8,8 +7,8 @@ export default function UserTable({ users, onRowClick }) {
     { key: 'email', title: 'Email' },
     {
       key: 'role',
-      title: 'Role',
-      render: (val) => val || 'N/A'
+      title: 'Roles',
+      render: (val) => val || '—'
     }
   ];
 

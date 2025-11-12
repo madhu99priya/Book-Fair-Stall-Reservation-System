@@ -76,6 +76,14 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+        public User updateUserRole(Long id, User.Role newRole) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setRole(newRole);
+        return userRepository.save(user);
+    }
+
+
     public void changePassword(String email, String oldPassword, String newPassword) {
         User user = getUserByEmail(email); // fetch user by email
 

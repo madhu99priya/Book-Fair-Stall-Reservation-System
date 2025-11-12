@@ -23,8 +23,8 @@ export default function UsersPage() {
     queryFn: () => usersService.list()
   });
 
-  const updateUserMutation = useMutation({
-    mutationFn: ({ userId, userData }) => usersService.update(userId, userData),
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ userId, role }) => usersService.updateRole(userId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       setEditUser(null);
@@ -49,9 +49,9 @@ export default function UsersPage() {
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch = searchTerm === '' ||
-      user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = roleFilter === 'ALL' || user.roles?.includes(roleFilter);
+    const matchesRole = roleFilter === 'ALL' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
 
@@ -94,8 +94,7 @@ export default function UsersPage() {
         >
           <option value="ALL">All Roles</option>
           <option value="ADMIN">Admin</option>
-          <option value="VENDOR">Vendor</option>
-          <option value="USER">User</option>
+          <option value="EXHIBITOR">Vendor</option>
         </select>
       </div>
       {isLoading ? (
@@ -118,10 +117,14 @@ export default function UsersPage() {
         user={editUser}
         open={!!editUser}
         onClose={() => setEditUser(null)}
-        onSave={(userData) => updateUserMutation.mutate({ userId: editUser.id, userData })}
-        onDelete={() => deleteUserMutation.mutate(editUser.id)}
-        isLoading={updateUserMutation.isPending || deleteUserMutation.isPending}
-      />
+      >
+        <UserRoleEditor
+          user={editUser}
+          onSave={(role) => updateRoleMutation.mutate({ userId: editUser.id, role })}
+          onCancel={() => setEditUser(null)}
+          isLoading={updateRoleMutation.isPending}
+        />
+      </Modal>
     </div>
   );
 }
