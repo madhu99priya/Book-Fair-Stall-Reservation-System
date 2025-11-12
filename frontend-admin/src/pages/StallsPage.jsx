@@ -5,6 +5,9 @@ import StallList from '../components/stalls/StallList.jsx';
 import StallForm from '../components/stalls/StallForm.jsx';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
 import Modal from '../components/common/Modal.jsx';
+import Button from '../components/common/Button.jsx';
+import Input, { Select } from '../components/common/Input.jsx';
+import { pageHeaderStyles, filterBarStyles } from '../styles/designSystem.js';
 
 export default function StallsPage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -55,69 +58,38 @@ export default function StallsPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h1 style={{ margin: 0 }}>Stalls Management</h1>
-        <button
-          onClick={() => setCreateModalOpen(true)}
-          style={{
-            padding: '0.5rem 1rem',
-            border: 'none',
-            borderRadius: '4px',
-            background: '#10b981',
-            color: '#fff',
-            cursor: 'pointer',
-            fontWeight: '500'
-          }}
-        >
+      <div style={pageHeaderStyles.container}>
+        <h1 style={pageHeaderStyles.title}>Stalls Management</h1>
+        <Button variant="success" onClick={() => setCreateModalOpen(true)}>
           + Create Stall
-        </button>
+        </Button>
       </div>
       
-      <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-        <input
+      <div style={filterBarStyles.container}>
+        <Input
+          variant="search"
           type="text"
           placeholder="Search stalls by name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            flex: 1,
-            padding: '0.5rem',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            fontSize: '0.875rem'
-          }}
         />
-        <select
+        <Select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
-            minWidth: '150px'
-          }}
         >
           <option value="ALL">All Status</option>
           <option value="AVAILABLE">Available</option>
           <option value="RESERVED">Reserved</option>
-        </select>
-        <select
+        </Select>
+        <Select
           value={sizeFilter}
           onChange={(e) => setSizeFilter(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
-            minWidth: '150px'
-          }}
         >
           <option value="ALL">All Sizes</option>
           <option value="SMALL">Small</option>
           <option value="MEDIUM">Medium</option>
           <option value="LARGE">Large</option>
-        </select>
+        </Select>
       </div>
       {isLoading ? (
         <p>Loading stalls...</p>

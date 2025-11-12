@@ -6,7 +6,9 @@ import UserDetailsModal from '../components/users/UserDetailsModal.jsx';
 import Modal from '../components/common/Modal.jsx';
 import Pagination from '../components/common/Pagination.jsx';
 import Skeleton from '../components/common/Skeleton.jsx';
+import Input, { Select } from '../components/common/Input.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import { pageHeaderStyles, filterBarStyles } from '../styles/designSystem.js';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -66,37 +68,27 @@ export default function UsersPage() {
 
   return (
     <div>
-      <h1>Users Management</h1>
-      <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-        <input
+      <div style={pageHeaderStyles.container}>
+        <h1 style={pageHeaderStyles.title}>Users Management</h1>
+      </div>
+      
+      <div style={filterBarStyles.container}>
+        <Input
+          variant="search"
           type="text"
           placeholder="Search by username or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            flex: 1,
-            padding: '0.5rem',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            fontSize: '0.875rem'
-          }}
         />
-        <select
+        <Select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
-            minWidth: '150px'
-          }}
         >
           <option value="ALL">All Roles</option>
           <option value="ADMIN">Admin</option>
           <option value="VENDOR">Vendor</option>
           <option value="USER">User</option>
-        </select>
+        </Select>
       </div>
       {isLoading ? (
         <Skeleton variant="table" rows={10} columns={4} />

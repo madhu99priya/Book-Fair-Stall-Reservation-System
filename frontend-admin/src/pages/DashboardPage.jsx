@@ -4,6 +4,7 @@ import reservationsService from '../services/reservationsService.js';
 import stallsService from '../services/stallsService.js';
 import usersService from '../services/usersService.js';
 import { SkeletonCard } from '../components/common/Skeleton.jsx';
+import { pageHeaderStyles } from '../styles/designSystem.js';
 
 export default function DashboardPage() {
   const resQ = useQuery({
@@ -29,7 +30,9 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <div style={pageHeaderStyles.container}>
+        <h1 style={pageHeaderStyles.title}>Dashboard</h1>
+      </div>
       {isLoading ? (
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
           {Array.from({ length: 6 }).map((_, i) => (

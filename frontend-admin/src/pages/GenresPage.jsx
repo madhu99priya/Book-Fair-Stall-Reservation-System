@@ -4,6 +4,8 @@ import genresService from '../services/genresService.js';
 import GenreForm from '../components/genres/GenreForm.jsx';
 import GenreTable from '../components/genres/GenreTable.jsx';
 import Skeleton from '../components/common/Skeleton.jsx';
+import Input from '../components/common/Input.jsx';
+import { pageHeaderStyles, filterBarStyles } from '../styles/designSystem.js';
 
 export default function GenresPage() {
   const [editGenre, setEditGenre] = React.useState(null);
@@ -46,27 +48,26 @@ export default function GenresPage() {
 
   return (
     <div>
-      <h1>Genres</h1>
+      <div style={pageHeaderStyles.container}>
+        <h1 style={pageHeaderStyles.title}>Genres</h1>
+      </div>
+      
       <GenreForm 
         onSubmit={handleSubmit} 
         loading={createMutation.isLoading || updateMutation.isPending}
         genre={editGenre}
         onCancel={() => setEditGenre(null)}
       />
-      <input
-        type="text"
-        placeholder="Search genres..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '0.5rem',
-          border: '1px solid #e2e8f0',
-          borderRadius: '4px',
-          fontSize: '0.875rem',
-          marginBottom: '1rem'
-        }}
-      />
+      
+      <div style={{ ...filterBarStyles.container, marginTop: '1rem' }}>
+        <Input
+          variant="search"
+          type="text"
+          placeholder="Search genres..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       {isLoading ? (
         <Skeleton variant="table" rows={6} columns={3} />
       ) : (
