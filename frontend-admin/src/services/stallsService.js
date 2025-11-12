@@ -17,8 +17,8 @@ const stallsService = {
     const { data } = await apiClient.delete(`/stalls/${id}`);
     return data;
   },
-  async reserve(stallIds, businessId) {
-    const { data } = await apiClient.post('/reservations', { stallIds, businessId });
+  async reserve(stallIds) {
+    const { data } = await apiClient.post('/reservations', { stallIds });
     return data;
   },
   async release(stallId) {

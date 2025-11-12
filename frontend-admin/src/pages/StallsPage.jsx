@@ -1,20 +1,19 @@
 // StallsPage.jsx
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import stallsService from '../services/stallsService.js';
+import StallMap from '../components/stalls/StallMap.jsx';
 import StallList from '../components/stalls/StallList.jsx';
 import StallForm from '../components/stalls/StallForm.jsx';
 import ConfirmDialog from '../components/common/ConfirmDialog.jsx';
 import Modal from '../components/common/Modal.jsx';
 
 export default function StallsPage() {
+  const [selected, setSelected] = useState([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editStall, setEditStall] = useState(null);
   const [deleteStall, setDeleteStall] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('ALL');
-  const [sizeFilter, setSizeFilter] = useState('ALL');
-  const [searchTerm, setSearchTerm] = useState('');
   const queryClient = useQueryClient();
 
   const { data: stalls = [], isLoading } = useQuery({
@@ -46,19 +45,28 @@ export default function StallsPage() {
     }
   });
 
-  const filteredStalls = stalls.filter((stall) => {
-    const matchesSearch = searchTerm === '' || stall.name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'ALL' || 
-      (statusFilter === 'AVAILABLE' && !stall.booked) ||
-      (statusFilter === 'RESERVED' && stall.booked);
-    const matchesSize = sizeFilter === 'ALL' || stall.size === sizeFilter;
-    return matchesSearch && matchesStatus && matchesSize;
+  const reserveMutation = useMutation({
+    mutationFn: ({ stallIds }) => stallsService.reserve(stallIds, 'BUSINESS_ID_PLACEHOLDER'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['stalls'] });
+      setSelected([]);
+      setConfirmOpen(false);
+    }
   });
+
+  function handleSelect(stall) {
+    setSelected((prev) =>
+      prev.includes(stall.id) ? prev.filter((id) => id !== stall.id) : [...prev, stall.id]
+    );
+  }
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h1 style={{ margin: 0 }}>Stalls Management</h1>
+        <div>
+          <h1 style={{ margin: 0 }}>Stalls</h1>
+          <p style={{ margin: '0.5rem 0 0 0' }}>Select up to 3 available stalls to reserve.</p>
+        </div>
         <button
           onClick={() => setCreateModalOpen(true)}
           style={{
@@ -74,67 +82,40 @@ export default function StallsPage() {
           + Create Stall
         </button>
       </div>
-      
-      <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-        <input
-          type="text"
-          placeholder="Search stalls by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{
-            flex: 1,
-            padding: '0.5rem',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            fontSize: '0.875rem'
-          }}
-        />
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
-            minWidth: '150px'
-          }}
-        >
-          <option value="ALL">All Status</option>
-          <option value="AVAILABLE">Available</option>
-          <option value="RESERVED">Reserved</option>
-        </select>
-        <select
-          value={sizeFilter}
-          onChange={(e) => setSizeFilter(e.target.value)}
-          style={{
-            padding: '0.5rem',
-            border: '1px solid #e2e8f0',
-            borderRadius: '4px',
-            fontSize: '0.875rem',
-            minWidth: '150px'
-          }}
-        >
-          <option value="ALL">All Sizes</option>
-          <option value="SMALL">Small</option>
-          <option value="MEDIUM">Medium</option>
-          <option value="LARGE">Large</option>
-        </select>
-      </div>
       {isLoading ? (
         <p>Loading stalls...</p>
       ) : (
         <>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '0.5rem' }}>
-            Showing {filteredStalls.length} of {stalls.length} stalls
-          </p>
-          <StallList 
-            stalls={filteredStalls} 
+          <StallMap stalls={stalls} selectedIds={selected} onSelect={handleSelect} />
+          <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+            <button
+              disabled={!selected.length || selected.length > 3}
+              onClick={() => setConfirmOpen(true)}
+            >
+              Reserve Selected ({selected.length})
+            </button>
+            <button onClick={() => setSelected([])} disabled={!selected.length}>
+              Clear Selection
+            </button>
+          </div>
+          <h2 style={{ marginTop: '2rem' }}>All Stalls</h2>
+          <StallList
+            stalls={stalls}
             onEdit={(stall) => setEditStall(stall)}
             onDelete={(stall) => setDeleteStall(stall)}
           />
         </>
       )}
+      <ConfirmDialog
+        open={confirmOpen}
+        message={`Confirm reservation for stalls: ${stalls
+          .filter((s) => selected.includes(s.id))
+          .map((s) => s.name)
+          .join(', ')}?`}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={() => reserveMutation.mutate({ stallIds: selected })}
+      />
+
       <Modal
         open={createModalOpen}
         title="Create New Stall"

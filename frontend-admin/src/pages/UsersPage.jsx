@@ -3,10 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import usersService from '../services/usersService.js';
 import UserTable from '../components/users/UserTable.jsx';
 import UserDetailsModal from '../components/users/UserDetailsModal.jsx';
-import Modal from '../components/common/Modal.jsx';
 import Pagination from '../components/common/Pagination.jsx';
 import Skeleton from '../components/common/Skeleton.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import UserRoleEditor from '../components/users/UserRoleEditor.jsx'
 
 const ITEMS_PER_PAGE = 10;
 
@@ -124,7 +124,7 @@ export default function UsersPage() {
           onCancel={() => setEditUser(null)}
           isLoading={updateRoleMutation.isPending}
         />
-      </Modal>
+      </UserDetailsModal>
     </div>
   );
 }
