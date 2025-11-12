@@ -1,6 +1,9 @@
-package com.bookfair.backend.config;
+package com.bookfair.backend.security;
 
 import com.bookfair.backend.service.CustomUserDetailsService;
+import com.bookfair.backend.security.JwtAuthenticationFilter;
+import com.bookfair.backend.service.JwtService;
+import com.bookfair.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,15 +30,19 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
-    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Authentication provider
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -44,21 +51,19 @@ public class SecurityConfig {
         return provider;
     }
 
-    // AuthenticationManager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
-    // CORS configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Add all dev frontend origins you actually use
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://localhost:5174"));
+                "http://localhost:5174",
+                "http://localhost:3000"));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of(
@@ -67,39 +72,37 @@ public class SecurityConfig {
                 "Accept",
                 "Origin",
                 "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("Authorization")); // Optional
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L); // Cache preflight for 1 hour
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Apply to all endpoints
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
-    // Security filter chain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Permit preflight requests explicitly
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // Public auth endpoints (choose whichever path your frontend uses)
                         .requestMatchers("/api/auth/**").permitAll()
-                        // If you still use /api/users/login/register keep them too:
                         .requestMatchers("/api/users/login", "/api/users/register").permitAll()
-
-                        // Example of allowing public read:
-                        // .requestMatchers(HttpMethod.GET,
-                        // "/api/stalls/**").hasAnyRole("ADMIN","VENDOR")
-
+                        // UPDATED: Use correct role names from your enum
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/stalls").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/stalls/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/stalls/**").hasRole("ADMIN")
+                        .requestMatchers("/api/stalls/**").hasAnyRole("ADMIN", "EXHIBITOR") // Updated role name
+                        .requestMatchers("/api/reservations/**").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/api/genres/**").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtService, userRepository),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -1,50 +1,70 @@
 package com.bookfair.backend.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-import com.bookfair.backend.model.User;
+import com.bookfair.backend.domain.User; // Using domain package
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class JwtService {
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
-    private static final String SECRET_KEY = "your_super_secret_key_that_is_at_least_256_bits_long!";
+    private final Key key;
+    private final long expirationMillis;
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    // Use configurable values from application.properties
+    public JwtService(
+            @Value("${jwt.secret:BookFairJwtSecretKeyForHS512ShouldBeVeryLongAndRandomForSecurity2024}") String secret,
+            @Value("${jwt.expiration-minutes:120}") long expirationMinutes) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.expirationMillis = expirationMinutes * 60_000;
+    }
 
-    // Generate JWT token
+    // UPDATED: Generate JWT token with single role support
     public String generateToken(User user) {
-        Map<String, Object> claims = new HashMap<>();
-        
-        claims.put("role", user.getRole().name());
+        // Convert single role to list for consistency with new code
+        return generateToken(user.getEmail(), List.of(user.getRole().name()));
+    }
 
+    // Generate token with username and roles
+    public String generateToken(String username, List<String> roles) {
+        Instant now = Instant.now();
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(user.getEmail())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key, SignatureAlgorithm.HS256)  // updated usage
+                .setSubject(username)
+                .addClaims(Map.of("roles", roles))
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plusMillis(expirationMillis)))
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    // ✅ Extract username from token
+    // Extract username from token
     public String extractUsername(String token) {
         return getClaims(token).getSubject();
     }
 
-    // ✅ Extract role from token
+    // Extract roles from token (supports multiple roles for future compatibility)
+    public List<String> extractRoles(String token) {
+        @SuppressWarnings("unchecked")
+        List<String> roles = (List<String>) getClaims(token).get("roles");
+        return roles != null ? roles : List.of();
+    }
+
+    // BACKWARD COMPATIBILITY: Extract single role
     public String extractRole(String token) {
-        return (String) getClaims(token).get("role");
+        List<String> roles = extractRoles(token);
+        return roles.isEmpty() ? null : roles.get(0);
     }
 
     // Validate token
@@ -53,14 +73,21 @@ public class JwtService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
+    // Parse method for compatibility with new auth filter
+    public Jws<Claims> parse(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+    }
+
+    // Get claims
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody(); 
+                .getBody();
     }
 
+    // Check if token is expired
     private boolean isTokenExpired(String token) {
         return getClaims(token).getExpiration().before(new Date());
     }

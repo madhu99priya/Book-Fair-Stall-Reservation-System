@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Reservation {
+public class Reservation_c {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +23,11 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     @NonNull
-    private User user;
+    private User_c user;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "reservation_stalls",
-        joinColumns = @JoinColumn(name = "reservation_id"),
-        inverseJoinColumns = @JoinColumn(name = "stall_id")
-    )
-    private List<Stall> stalls;
+    @JoinTable(name = "reservation_stalls", joinColumns = @JoinColumn(name = "reservation_id"), inverseJoinColumns = @JoinColumn(name = "stall_id"))
+    private List<Stall_c> stalls;
 
     private LocalDateTime reservedAt;
 

@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Stall {
+public class Stall_c {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,13 +1,11 @@
 package com.bookfair.backend.repository;
 
-import com.bookfair.backend.model.Stall;
+import com.bookfair.backend.domain.Stall;
+import com.bookfair.backend.domain.enums.StallStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
-@Repository
 public interface StallRepository extends JpaRepository<Stall, Long> {
-    Optional<Stall> findByName(String name);
+    List<Stall> findByStatus(StallStatus status);
 }
-

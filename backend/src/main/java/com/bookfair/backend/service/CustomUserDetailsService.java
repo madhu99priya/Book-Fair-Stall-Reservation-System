@@ -1,8 +1,6 @@
-// CustomUserDetailsService.java
-
 package com.bookfair.backend.service;
 
-import com.bookfair.backend.model.User;
+import com.bookfair.backend.domain.User; // Using domain package
 import com.bookfair.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,17 +12,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+        private final UserRepository userRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        @Override
+        public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+                User user = userRepository.findByEmail(email)
+                                .orElseThrow(() -> new UsernameNotFoundException(
+                                                "User not found with email: " + email));
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRole().name())
-                .build();
-    }
+                // UPDATED: Handle single role enum (not multiple roles)
+                return org.springframework.security.core.userdetails.User.builder()
+                                .username(user.getEmail())
+                                .password(user.getPassword())
+                                .roles(user.getRole().name()) // FIXED: single role from enum
+                                .build();
+        }
 }
