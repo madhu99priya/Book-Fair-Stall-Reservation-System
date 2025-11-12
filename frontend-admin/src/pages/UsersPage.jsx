@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import usersService from '../services/usersService.js';
 import UserTable from '../components/users/UserTable.jsx';
-import UserRoleEditor from '../components/users/UserRoleEditor.jsx';
+import UserDetailsModal from '../components/users/UserDetailsModal.jsx';
 import Modal from '../components/common/Modal.jsx';
 import Pagination from '../components/common/Pagination.jsx';
 import Skeleton from '../components/common/Skeleton.jsx';
@@ -28,10 +28,22 @@ export default function UsersPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       setEditUser(null);
-      addToast('User roles updated successfully', 'success');
+      addToast('User updated successfully', 'success');
     },
     onError: () => {
-      addToast('Failed to update user roles', 'error');
+      addToast('Failed to update user', 'error');
+    }
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId) => usersService.delete(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      setEditUser(null);
+      addToast('User deleted successfully', 'success');
+    },
+    onError: () => {
+      addToast('Failed to delete user', 'error');
     }
   });
 
@@ -101,9 +113,9 @@ export default function UsersPage() {
           )}
         </>
       )}
-      <Modal
+      <UserDetailsModal
+        user={editUser}
         open={!!editUser}
-        title="Edit User Roles"
         onClose={() => setEditUser(null)}
       >
         <UserRoleEditor
