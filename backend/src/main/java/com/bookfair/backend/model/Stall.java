@@ -28,7 +28,7 @@ public class Stall {
     private Double price;
 
     @Builder.Default
-    private boolean booked = false; // Default value for @Builder
+    private boolean booked = false;
 
     public enum Size {
         SMALL, MEDIUM, LARGE

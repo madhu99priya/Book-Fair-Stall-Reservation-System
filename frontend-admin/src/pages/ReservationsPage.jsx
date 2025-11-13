@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import reservationsService from '../services/reservationsService.js';
 import ReservationTable from '../components/reservations/ReservationTable.jsx';
@@ -13,15 +13,19 @@ export default function ReservationsPage() {
     queryKey: ['reservations'],
     queryFn: () => reservationsService.list()
   });
+
   const [activeReservation, setActiveReservation] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
 
   const cancelMutation = useMutation({
     mutationFn: (id) => reservationsService.cancel(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['reservations'] });
-      setActiveReservation(null);
+      // Update activeReservation status immediately if it's the same
+      if (activeReservation?.id === id) {
+        setActiveReservation({ ...activeReservation, status: 'CANCELLED' });
+      }
       addToast('Reservation cancelled successfully', 'success');
     },
     onError: () => {
@@ -29,29 +33,49 @@ export default function ReservationsPage() {
     }
   });
 
+  // Confirm Reservation
+  const confirmMutation = useMutation({
+    mutationFn: (id) => reservationsService.confirm(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ['reservations'] });
+      if (activeReservation?.id === id) {
+        setActiveReservation({ ...activeReservation, status: 'CONFIRMED' });
+      }
+      addToast('Reservation confirmed successfully', 'success');
+    },
+    onError: () => {
+      addToast('Failed to confirm reservation', 'error');
+    }
+  });
+
   const filteredReservations = reservations.filter((reservation) => {
-    const matchesSearch = searchTerm === '' || 
-      reservation.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch =
+      searchTerm === '' ||
+      reservation.user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       reservation.id?.toString().includes(searchTerm);
-    const matchesStatus = statusFilter === 'ALL' || reservation.status === statusFilter;
+
+    const matchesStatus =
+      statusFilter === 'ALL' ||
+      reservation.status === statusFilter.toUpperCase();
+
     return matchesSearch && matchesStatus;
   });
 
   const exportToCSV = () => {
-    const headers = ['ID', 'Business Name', 'Stalls', 'Status', 'Created At'];
+    const headers = ['ID', 'Purchased By', 'Stalls', 'Status', 'Reserved At'];
     const rows = filteredReservations.map(r => [
       r.id,
-      r.businessName || 'N/A',
+      r.user.fullName || 'N/A',
       r.stalls?.map(s => s.name).join('; ') || '',
       r.status,
-      new Date(r.createdAt).toLocaleString()
+      new Date(r.reservedAt).toLocaleString()
     ]);
-    
+
     const csvContent = [
       headers.join(','),
       ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
     ].join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -65,6 +89,7 @@ export default function ReservationsPage() {
 
   return (
     <div>
+      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <h1 style={{ margin: 0 }}>Reservations</h1>
         <button
@@ -85,10 +110,12 @@ export default function ReservationsPage() {
           📊 Export to CSV
         </button>
       </div>
+
+      {/* Search & Filter */}
       <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
         <input
           type="text"
-          placeholder="Search by business name or ID..."
+          placeholder="Search by name or ID..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -111,11 +138,13 @@ export default function ReservationsPage() {
           }}
         >
           <option value="ALL">All Status</option>
-          <option value="PENDING">Pending</option>
+          <option value="BOOKED">Booked</option>
           <option value="CONFIRMED">Confirmed</option>
           <option value="CANCELLED">Cancelled</option>
         </select>
       </div>
+
+      {/* Table */}
       {isLoading ? (
         <Skeleton variant="table" rows={8} columns={5} />
       ) : (
@@ -129,6 +158,8 @@ export default function ReservationsPage() {
           />
         </>
       )}
+
+      {/* Modal */}
       <Modal
         open={!!activeReservation}
         title={`Reservation Details #${activeReservation?.id}`}
@@ -136,14 +167,9 @@ export default function ReservationsPage() {
       >
         {activeReservation && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* QR Code */}
             {activeReservation.qrCodeBase64 && (
-              <div style={{ 
-                padding: '1rem', 
-                background: '#f8fafc', 
-                borderRadius: '6px',
-                border: '1px solid #e2e8f0',
-                textAlign: 'center'
-              }}>
+              <div style={{ padding: '1rem', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
                 <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: '#1e293b' }}>QR Code</h3>
                 <img 
                   src={`data:image/png;base64,${activeReservation.qrCodeBase64}`} 
@@ -152,16 +178,12 @@ export default function ReservationsPage() {
                 />
               </div>
             )}
-            
-            <div style={{ 
-              padding: '1rem', 
-              background: '#f8fafc', 
-              borderRadius: '6px',
-              border: '1px solid #e2e8f0'
-            }}>
-              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: '#1e293b' }}>Business Information</h3>
+
+            {/* User Info */}
+            <div style={{ padding: '1rem', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: '#1e293b' }}>User Information</h3>
               <p style={{ margin: '0.25rem 0', fontSize: '0.875rem' }}>
-                <strong>Name:</strong> {activeReservation.businessName || 'N/A'}
+                <strong>Name:</strong> {activeReservation.user.fullName || 'N/A'}
               </p>
               <p style={{ margin: '0.25rem 0', fontSize: '0.875rem' }}>
                 <strong>Status:</strong>{' '}
@@ -170,20 +192,20 @@ export default function ReservationsPage() {
                   borderRadius: '4px',
                   fontSize: '0.75rem',
                   fontWeight: '500',
-                  background: activeReservation.status === 'CONFIRMED' ? '#dcfce7' : '#fef3c7',
-                  color: activeReservation.status === 'CONFIRMED' ? '#166534' : '#854d0e'
+                  background: activeReservation.status === 'CONFIRMED' ? '#dcfce7' :
+                              activeReservation.status === 'CANCELLED' ? '#fee2e2' :
+                              '#fef3c7',
+                  color: activeReservation.status === 'CONFIRMED' ? '#166534' :
+                         activeReservation.status === 'CANCELLED' ? '#991b1b' :
+                         '#854d0e'
                 }}>
                   {activeReservation.status}
                 </span>
               </p>
             </div>
 
-            <div style={{ 
-              padding: '1rem', 
-              background: '#f8fafc', 
-              borderRadius: '6px',
-              border: '1px solid #e2e8f0'
-            }}>
+            {/* Reserved Stalls */}
+            <div style={{ padding: '1rem', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
               <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: '#1e293b' }}>Reserved Stalls</h3>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
                 {activeReservation.stalls?.map((stall) => (
@@ -207,15 +229,11 @@ export default function ReservationsPage() {
               </p>
             </div>
 
-            <div style={{ 
-              padding: '1rem', 
-              background: '#f8fafc', 
-              borderRadius: '6px',
-              border: '1px solid #e2e8f0'
-            }}>
+            {/* Timeline */}
+            <div style={{ padding: '1rem', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
               <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: '#1e293b' }}>Timeline</h3>
               <p style={{ margin: '0.25rem 0', fontSize: '0.875rem' }}>
-                <strong>Created:</strong> {new Date(activeReservation.createdAt).toLocaleString()}
+                <strong>Created:</strong> {new Date(activeReservation.reservedAt).toLocaleString()}
               </p>
               {activeReservation.updatedAt && (
                 <p style={{ margin: '0.25rem 0', fontSize: '0.875rem' }}>
@@ -223,7 +241,8 @@ export default function ReservationsPage() {
                 </p>
               )}
             </div>
-            
+
+            {/* Action Buttons */}
             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
               <button
                 onClick={() => setActiveReservation(null)}
@@ -235,20 +254,44 @@ export default function ReservationsPage() {
               >
                 Close
               </button>
+              {/* Cancel */}
               <button
                 onClick={() => {
                   if (window.confirm('Are you sure you want to cancel this reservation?')) {
                     cancelMutation.mutate(activeReservation.id);
                   }
                 }}
-                disabled={cancelMutation.isPending}
+                disabled={cancelMutation.isPending || activeReservation.status === 'CANCELLED'}
                 style={{
                   background: '#ef4444',
-                  border: '1px solid #ef4444'
+                  border: '1px solid #ef4444',
+                  cursor: activeReservation.status === 'CANCELLED' ? 'not-allowed' : 'pointer',
+                  opacity: activeReservation.status === 'CANCELLED' ? 0.6 : 1
                 }}
               >
                 {cancelMutation.isPending ? 'Cancelling...' : 'Cancel Reservation'}
               </button>
+
+              {/* Confirm */}
+              {activeReservation.status === 'BOOKED' && (
+                <button
+                  onClick={() => {
+                    if (window.confirm('Confirm this reservation?')) {
+                      confirmMutation.mutate(activeReservation.id);
+                    }
+                  }}
+                  disabled={confirmMutation.isPending}
+                  style={{
+                    background: '#10b981',
+                    border: '1px solid #10b981',
+                    cursor: 'pointer',
+                    color: '#fff'
+                  }}
+                >
+                  {confirmMutation.isPending ? 'Confirming...' : 'Confirm Reservation'}
+                </button>
+              )}
+              
             </div>
           </div>
         )}

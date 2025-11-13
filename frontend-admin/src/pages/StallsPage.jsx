@@ -55,6 +55,9 @@ export default function StallsPage() {
   });
 
   function handleSelect(stall) {
+    // Only allow selection if the stall is not already booked
+    if (stall.booked) return;
+
     setSelected((prev) =>
       prev.includes(stall.id) ? prev.filter((id) => id !== stall.id) : [...prev, stall.id]
     );
@@ -82,11 +85,16 @@ export default function StallsPage() {
           + Create Stall
         </button>
       </div>
+
       {isLoading ? (
         <p>Loading stalls...</p>
       ) : (
         <>
-          <StallMap stalls={stalls} selectedIds={selected} onSelect={handleSelect} />
+          <StallMap
+            stalls={stalls}
+            selectedIds={selected}
+            onSelect={handleSelect}
+          />
           <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
             <button
               disabled={!selected.length || selected.length > 3}
@@ -98,14 +106,21 @@ export default function StallsPage() {
               Clear Selection
             </button>
           </div>
+
           <h2 style={{ marginTop: '2rem' }}>All Stalls</h2>
           <StallList
-            stalls={stalls}
+            stalls={stalls.map((stall) => ({
+              ...stall,
+              status: stall.status || (stall.booked ? "BOOKED" : "AVAILABLE")
+            }))}
             onEdit={(stall) => setEditStall(stall)}
             onDelete={(stall) => setDeleteStall(stall)}
+            onSelect={handleSelect}
+            selectedIds={selected}
           />
         </>
       )}
+
       <ConfirmDialog
         open={confirmOpen}
         message={`Confirm reservation for stalls: ${stalls
@@ -127,6 +142,7 @@ export default function StallsPage() {
           isLoading={createMutation.isPending}
         />
       </Modal>
+
       <Modal
         open={!!editStall}
         title="Edit Stall"
@@ -139,6 +155,7 @@ export default function StallsPage() {
           isLoading={updateMutation.isPending}
         />
       </Modal>
+
       <ConfirmDialog
         open={!!deleteStall}
         message={`Are you sure you want to delete stall "${deleteStall?.name}"? This action cannot be undone.`}

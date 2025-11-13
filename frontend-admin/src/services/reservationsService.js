@@ -12,6 +12,10 @@ const reservationsService = {
   async cancel(id) {
     const { data } = await apiClient.delete(`/reservations/${id}`);
     return data;
+  },
+  async confirm(id) {
+    const { data } = await apiClient.post(`/reservations/${id}/confirm`);
+    return data;
   }
 };
 

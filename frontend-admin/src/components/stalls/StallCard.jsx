@@ -1,7 +1,13 @@
-import React from 'react';
 import StatusBadge from '../common/StatusBadge.jsx';
 
 export default function StallCard({ stall, onEdit, onDelete }) {
+  // Determine display status
+  const status = stall.status
+    ? stall.status.toUpperCase()
+    : stall.booked
+    ? "BOOKED"
+    : "AVAILABLE";
+
   return (
     <div
       style={{
@@ -11,12 +17,15 @@ export default function StallCard({ stall, onEdit, onDelete }) {
         border: '1px solid #e2e8f0',
         display: 'flex',
         flexDirection: 'column',
-        gap: '0.4rem'
+        gap: '0.4rem',
       }}
     >
       <strong>{stall.name}</strong>
       <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Size: {stall.size}</div>
-      <StatusBadge status={stall.status?.toLowerCase() === 'reserved' ? 'RESERVED' : 'AVAILABLE'} />
+
+      {/* Status badge */}
+      <StatusBadge status={status} />
+
       <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.5rem' }}>
         {onEdit && (
           <button
@@ -29,7 +38,7 @@ export default function StallCard({ stall, onEdit, onDelete }) {
               borderRadius: '4px',
               background: '#fff',
               color: '#3b82f6',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             Edit
@@ -46,7 +55,7 @@ export default function StallCard({ stall, onEdit, onDelete }) {
               borderRadius: '4px',
               background: '#fff',
               color: '#ef4444',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             Delete
