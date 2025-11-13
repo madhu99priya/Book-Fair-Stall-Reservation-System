@@ -6,7 +6,6 @@ import UserDetailsModal from '../components/users/UserDetailsModal.jsx';
 import Pagination from '../components/common/Pagination.jsx';
 import Skeleton from '../components/common/Skeleton.jsx';
 import { useToast } from '../context/ToastContext.jsx';
-import UserRoleEditor from '../components/users/UserRoleEditor.jsx'
 
 const ITEMS_PER_PAGE = 10;
 
@@ -17,7 +16,7 @@ export default function UsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const queryClient = useQueryClient();
   const { addToast } = useToast();
-  
+
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['users'],
     queryFn: () => usersService.list()
@@ -48,7 +47,8 @@ export default function UsersPage() {
   });
 
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = searchTerm === '' ||
+    const matchesSearch =
+      searchTerm === '' ||
       user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = roleFilter === 'ALL' || user.role === roleFilter;
@@ -97,6 +97,7 @@ export default function UsersPage() {
           <option value="EXHIBITOR">Vendor</option>
         </select>
       </div>
+
       {isLoading ? (
         <Skeleton variant="table" rows={10} columns={4} />
       ) : (
@@ -113,18 +114,16 @@ export default function UsersPage() {
           )}
         </>
       )}
+
+      {/* Pass onSave, onDelete, isLoading directly to the modal */}
       <UserDetailsModal
         user={editUser}
         open={!!editUser}
         onClose={() => setEditUser(null)}
-      >
-        <UserRoleEditor
-          user={editUser}
-          onSave={(role) => updateRoleMutation.mutate({ userId: editUser.id, role })}
-          onCancel={() => setEditUser(null)}
-          isLoading={updateRoleMutation.isPending}
-        />
-      </UserDetailsModal>
+        onSave={(formData) => updateRoleMutation.mutate({ userId: editUser.id, role: formData.role })}
+        onDelete={() => deleteUserMutation.mutate(editUser.id)}
+        isLoading={updateRoleMutation.isPending || deleteUserMutation.isPending}
+      />
     </div>
   );
 }

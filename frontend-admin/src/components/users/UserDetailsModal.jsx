@@ -25,10 +25,13 @@ export default function UserDetailsModal({ user, open, onClose, onSave, onDelete
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData);
+    if (typeof onSave === 'function') {
+      onSave({ role: formData.role }); // Only send role update
+    }
   };
 
   const handleDelete = () => {
+    if (typeof onDelete !== 'function') return;
     if (window.confirm(`Are you sure you want to delete user "${user?.fullName}"? This action cannot be undone.`)) {
       onDelete();
     }
@@ -37,6 +40,7 @@ export default function UserDetailsModal({ user, open, onClose, onSave, onDelete
   return (
     <Modal open={open} title="User Details" onClose={onClose}>
       <form onSubmit={handleSubmit}>
+        {/* Full Name */}
         <div style={{ marginBottom: '1rem' }}>
           <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: '500' }}>
             Full Name
@@ -45,11 +49,16 @@ export default function UserDetailsModal({ user, open, onClose, onSave, onDelete
             type="text"
             name="fullName"
             value={formData.fullName}
-            onChange={handleChange}
-            required
+            readOnly
+            style={{
+              backgroundColor: '#e5e7eb',
+              color: '#6b7280',
+              cursor: 'not-allowed'
+            }}
           />
         </div>
 
+        {/* Email */}
         <div style={{ marginBottom: '1rem' }}>
           <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: '500' }}>
             Email
@@ -58,11 +67,16 @@ export default function UserDetailsModal({ user, open, onClose, onSave, onDelete
             type="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}
-            required
+            readOnly
+            style={{
+              backgroundColor: '#e5e7eb',
+              color: '#6b7280',
+              cursor: 'not-allowed'
+            }}
           />
         </div>
 
+        {/* Role */}
         <div style={{ marginBottom: '1rem' }}>
           <label style={{ display: 'block', marginBottom: '0.25rem', fontWeight: '500' }}>
             Role
@@ -79,19 +93,29 @@ export default function UserDetailsModal({ user, open, onClose, onSave, onDelete
           </select>
         </div>
 
+        {/* Buttons */}
         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'space-between', marginTop: '1.5rem' }}>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={isLoading}
-            style={{
-              background: '#ef4444',
-              border: '1px solid #ef4444'
-            }}
-          >
-            Delete User
-          </button>
+          {/* Delete */}
+          {typeof onDelete === 'function' && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isLoading}
+              style={{
+                background: '#ef4444',
+                border: '1px solid #ef4444',
+                color: '#fff',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: isLoading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              Delete User
+            </button>
+          )}
+
           <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {/* Cancel */}
             <button
               type="button"
               onClick={onClose}
@@ -99,14 +123,32 @@ export default function UserDetailsModal({ user, open, onClose, onSave, onDelete
               style={{
                 background: '#fff',
                 color: '#374151',
-                border: '1px solid #d1d5db'
+                border: '1px solid #d1d5db',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                cursor: isLoading ? 'not-allowed' : 'pointer'
               }}
             >
               Cancel
             </button>
-            <button type="submit" disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save Changes'}
-            </button>
+
+            {/* Save */}
+            {typeof onSave === 'function' && (
+              <button
+                type="submit"
+                disabled={isLoading}
+                style={{
+                  background: '#3b82f6',
+                  color: '#fff',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: isLoading ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isLoading ? 'Saving...' : 'Save Role'}
+              </button>
+            )}
           </div>
         </div>
       </form>
