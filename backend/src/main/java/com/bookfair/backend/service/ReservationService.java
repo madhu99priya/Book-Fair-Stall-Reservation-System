@@ -54,6 +54,35 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
+    // Confirm a reservation
+    public Reservation confirmReservation(Long reservationId, User user) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+
+        // Admins can confirm any reservation; users can confirm their own
+        if (!reservation.getUser().getId().equals(user.getId())
+                && user.getRole() != User.Role.ADMIN) {
+            throw new RuntimeException("You are not authorized to confirm this reservation");
+        }
+
+        // Only allow confirming if currently BOOKED
+        if (reservation.getStatus() != Reservation.Status.BOOKED) {
+            throw new RuntimeException("Only BOOKED reservations can be confirmed");
+        }
+
+        // Set status to CONFIRMED and update updatedAt
+        reservation.setStatus(Reservation.Status.CONFIRMED);
+        reservation.setUpdatedAt(LocalDateTime.now());
+
+        // Ensure stalls remain booked
+        for (Stall stall : reservation.getStalls()) {
+            stall.setBooked(true);
+            stallRepository.save(stall);
+        }
+
+        return reservationRepository.save(reservation);
+    }
+
     // Get all reservations
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -64,20 +93,29 @@ public class ReservationService {
         return reservationRepository.findByUser(user);
     }
 
-    // Cancel reservation
+    // Cancel Reservation
     public void cancelReservation(Long reservationId, User user) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
-        
-        if (!reservation.getUser().getId().equals(user.getId())) {
+
+        // Admins can cancel any reservation; users can cancel their own
+        if (!reservation.getUser().getId().equals(user.getId()) 
+                && user.getRole() != User.Role.ADMIN) {
             throw new RuntimeException("You are not authorized to cancel this reservation");
         }
-        // Free up the stall
+
+        // Mark reservation as CANCELLED instead of deleting
+        reservation.setStatus(Reservation.Status.CANCELLED);
+        reservation.setUpdatedAt(LocalDateTime.now());
+        reservationRepository.save(reservation);
+
+        // Free up the stalls
         for (Stall stall : reservation.getStalls()) {
             stall.setBooked(false);
             stallRepository.save(stall);
         }
-
-        reservationRepository.deleteById(reservationId);
     }
+
+
+
 }

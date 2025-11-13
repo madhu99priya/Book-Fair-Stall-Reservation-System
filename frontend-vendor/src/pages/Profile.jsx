@@ -118,14 +118,19 @@ export default function Profile() {
     }
   };
 
-  // Cancel reservation
+  // Profile.jsx cancel function
   const handleCancelReservation = async (id) => {
-    if (!window.confirm("Are you sure you want to cancel this reservation?"))
-      return;
+    if (!window.confirm("Are you sure you want to cancel this reservation?")) return;
+
     try {
       await axios.delete(`http://localhost:8081/api/reservations/${id}`);
-      setReservations(reservations.filter((r) => r.id !== id));
       alert("Reservation canceled successfully.");
+
+      setReservations((prev) =>
+        prev.map((r) =>
+          r.id === id ? { ...r, status: "CANCELLED" } : r
+        )
+      );
     } catch (err) {
       console.error("❌ Cancel failed:", err);
       alert("Failed to cancel reservation. Try again.");
@@ -269,30 +274,51 @@ export default function Profile() {
         ) : (
           <ul className="space-y-3">
             {reservations.map((res) => (
-            <li
-              key={res.id}
-              className="flex flex-col justify-between items-start p-3 bg-gray-700 rounded"
-            >
-              <span className="mb-1 font-semibold">Reservation #{res.id} - {new Date(res.reservedAt).toLocaleString()}</span>
-              <ul className="ml-4 mb-2">
-                {res.stalls?.length > 0 ? (
-                  res.stalls.map((stall) => (
-                    <li key={stall.id}>
-                      {stall.name} ({stall.size})
-                    </li>
-                  ))
-                ) : (
-                  <li>No stalls reserved</li>
-                )}
-              </ul>
-              <button
-                onClick={() => handleCancelReservation(res.id)}
-                className="px-3 py-1 bg-red-500 hover:bg-red-600 rounded"
+              <li
+                key={res.id}
+                className="flex flex-col justify-between items-start p-3 bg-gray-700 rounded"
               >
-                Cancel
-              </button>
-            </li>
-          ))}
+                <div className="flex items-center justify-between w-full mb-1">
+                  <span className="font-semibold">
+                    Reservation #{res.id} - {new Date(res.reservedAt).toLocaleString()}
+                  </span>
+                  {/* Reservation Status Badge */}
+                  <span
+                    className={`px-2 py-1 rounded text-sm font-medium ${
+                      res.status === "CONFIRMED"
+                        ? "bg-green-200 text-green-800"
+                        : res.status === "CANCELLED"
+                        ? "bg-red-200 text-red-800"
+                        : "bg-yellow-200 text-yellow-800"
+                    }`}
+                  >
+                    {res.status}
+                  </span>
+                </div>
+
+                <ul className="ml-4 mb-2">
+                  {res.stalls?.length > 0 ? (
+                    res.stalls.map((stall) => (
+                      <li key={stall.id}>
+                        {stall.name} ({stall.size})
+                      </li>
+                    ))
+                  ) : (
+                    <li>No stalls reserved</li>
+                  )}
+                </ul>
+
+                {/* Cancel button only if reservation is not CANCELLED */}
+                {res.status === "BOOKED" && (
+                <button
+                  onClick={() => handleCancelReservation(res.id)}
+                  className="px-3 py-1 bg-red-500 hover:bg-red-600 rounded"
+                >
+                  Cancel
+                </button>
+              )}
+              </li>
+            ))}
           </ul>
         )}
       </div>

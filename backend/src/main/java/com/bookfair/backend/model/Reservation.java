@@ -37,4 +37,28 @@ public class Reservation {
 
     private LocalDateTime reservedAt;
 
+    private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private Status status = Status.BOOKED;
+
+    public enum Status {
+        CONFIRMED,
+        CANCELLED,
+        BOOKED
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        reservedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
 }

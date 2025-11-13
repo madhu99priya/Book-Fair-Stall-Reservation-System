@@ -108,6 +108,20 @@ public class ReservationController {
         }
     }
 
+    // Confirm reservation
+    @PostMapping("/{id}/confirm")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<Reservation> confirmReservation(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+        User user = userService.getUserByEmail(email);
+
+        Reservation confirmedReservation = reservationService.confirmReservation(id, user);
+        return ResponseEntity.ok(confirmedReservation);
+    }
+
     // Get all reservations
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -128,11 +142,14 @@ public class ReservationController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'EXHIBITOR')")
     public ResponseEntity<Void> cancelReservation(
-        @PathVariable Long id,
-        Authentication authentication) {
+            @PathVariable Long id,
+            Authentication authentication) {
+
         String email = authentication.getName();
         User user = userService.getUserByEmail(email);
         reservationService.cancelReservation(id, user);
         return ResponseEntity.noContent().build();
     }
+
+
 }

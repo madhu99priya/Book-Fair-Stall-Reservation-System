@@ -75,8 +75,7 @@ export default function UserDetailsModal({ user, open, onClose, onSave, onDelete
           >
             <option value="">Select Role</option>
             <option value="ADMIN">Admin</option>
-            <option value="VENDOR">Vendor</option>
-            <option value="USER">User</option>
+            <option value="EXHIBITOR">Exhibitor</option>
           </select>
         </div>
 

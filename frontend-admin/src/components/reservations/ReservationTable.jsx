@@ -5,22 +5,27 @@ import StatusBadge from '../common/StatusBadge.jsx';
 export default function ReservationTable({ reservations, onRowClick }) {
   const columns = [
     { key: 'id', title: 'ID' },
-    { key: 'businessName', title: 'Business' },
     {
-      key: 'stallNames',
+      key: 'user',
+      title: 'Purchased By',
+      render: (_, row) => row.user?.fullName || 'N/A'
+    },
+    {
+      key: 'stalls',
       title: 'Stalls',
-      render: (val, row) => row.stalls?.map((s) => s.name).join(', ')
+      render: (_, row) => row.stalls?.map((s) => s.name).join(', ') || 'N/A'
     },
     {
       key: 'status',
       title: 'Status',
-      render: (val) => <StatusBadge status={val} />
+      render: (_, row) => <StatusBadge status={row.status} />
     },
     {
-      key: 'createdAt',
-      title: 'Created',
-      render: (val) => new Date(val).toLocaleString()
+      key: 'reservedAt',
+      title: 'Reserved At',
+      render: (_, row) => new Date(row.reservedAt).toLocaleString()
     }
   ];
+
   return <DataTable columns={columns} data={reservations} onRowClick={onRowClick} />;
 }
