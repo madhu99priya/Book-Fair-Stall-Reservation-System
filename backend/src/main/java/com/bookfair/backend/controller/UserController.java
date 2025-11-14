@@ -108,6 +108,15 @@ public class UserController {
         userService.changePassword(auth.getName(), request.oldPassword(), request.newPassword());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/genres")
+    public User addGenresForCurrentUser(
+            @RequestBody List<String> genres,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+        return userService.addGenresForCurrentUser(genres, email);
+    }
     
     // DTOs
     record LoginRequest(String email, String password) {}
