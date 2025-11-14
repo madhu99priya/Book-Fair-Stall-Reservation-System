@@ -21,6 +21,13 @@ public class GenreController {
         return ResponseEntity.ok(genreService.createGenre(genre));
     }
 
+    // get genre by id
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EXHIBITOR')")
+    public ResponseEntity<Genre> getGenreById(@PathVariable Long id) {
+        return ResponseEntity.ok(genreService.getGenreById(id));
+    }
+
     // delete genre
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

@@ -1,5 +1,6 @@
 package com.bookfair.backend.service;
 
+import com.bookfair.backend.model.Genre;
 import com.bookfair.backend.model.User;
 import com.bookfair.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +9,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final GenreService genreService;
 
     // Register a new user
     public User registerUser(User user) {
@@ -114,5 +118,21 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    @Transactional
+    public User addGenresForCurrentUser(List<String> genreNames, String email) {
+        // Call getUserByEmail directly, not userService
+        User user = getUserByEmail(email);
+
+        List<Genre> genres = genreNames.stream()
+                .map(name -> genreService.createGenre(
+                        Genre.builder().name(name).build()
+                ))
+                .collect(Collectors.toList());
+
+        user.setGenres(genres);
+        return userRepository.save(user);
+    }
+
 
 }
