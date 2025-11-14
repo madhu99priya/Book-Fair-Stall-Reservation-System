@@ -2,6 +2,8 @@
 
 package com.bookfair.backend.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +32,14 @@ public class User {
     @Column(nullable = false)
     @Builder.Default
     private Role role = Role.EXHIBITOR;
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_genres",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private List<Genre> genres;
 
     public enum Role {
         ADMIN,
