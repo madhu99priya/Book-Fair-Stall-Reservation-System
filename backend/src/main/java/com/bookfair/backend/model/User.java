@@ -1,5 +1,3 @@
-// User.java
-
 package com.bookfair.backend.model;
 
 import java.util.List;
@@ -34,11 +32,7 @@ public class User {
     private Role role = Role.EXHIBITOR;
 
     @ManyToMany
-    @JoinTable(
-        name = "user_genres",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
+    @JoinTable(name = "user_genres", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 
     public enum Role {

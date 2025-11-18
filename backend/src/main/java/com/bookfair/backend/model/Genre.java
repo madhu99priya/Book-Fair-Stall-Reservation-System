@@ -1,6 +1,7 @@
 package com.bookfair.backend.model;
 
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +22,7 @@ public class Genre {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "genres")
     private List<User> users;
 }
