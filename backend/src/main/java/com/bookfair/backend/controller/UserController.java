@@ -82,7 +82,6 @@ public class UserController {
         return userService.updateUser(updatedData);
     }
 
-    // Optional: Admin can update any user
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public User updateUserByAdmin(@PathVariable Long id, @RequestBody User updatedData) {
@@ -109,13 +108,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/genres")
+    @PutMapping("/genres")
+    @PreAuthorize("hasAnyRole('ADMIN','EXHIBITOR')")
     public User addGenresForCurrentUser(
-            @RequestBody List<String> genres,
+            @RequestBody List<String> genreNames,
             Authentication authentication
     ) {
-        String email = authentication.getName();
-        return userService.addGenresForCurrentUser(genres, email);
+        if (authentication == null) throw new RuntimeException("User not authenticated");
+        return userService.updateGenresForCurrentUser(genreNames, authentication.getName());
     }
     
     // DTOs

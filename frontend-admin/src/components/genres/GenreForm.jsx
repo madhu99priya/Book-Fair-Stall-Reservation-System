@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+// Genre Form
+
+import { useState, useEffect } from 'react';
 
 export default function GenreForm({ onSubmit, loading, genre, onCancel }) {
   const [name, setName] = useState('');

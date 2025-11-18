@@ -1,4 +1,5 @@
-import React from 'react';
+// Genre Table
+
 import DataTable from '../common/DataTable.jsx';
 
 export default function GenreTable({ genres, onDelete, onEdit }) {

@@ -52,6 +52,11 @@ export default function Navbar() {
                   Profile
                 </button>
               )}
+              {user && (
+                <button className={linkClasses} onClick={() => handleNavigation("/genre")}>
+                  Genres
+                </button>
+              )}
               {user ? (
                 <button className={linkClasses} onClick={logout}>
                   Logout

@@ -14,7 +14,6 @@ export default function Login() {
     setError("");
     try {
       await login(username, password);
-      // Redirect handled in AuthContext
     } catch (err) {
       setError("Invalid username or password");
     }

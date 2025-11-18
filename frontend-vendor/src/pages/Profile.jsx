@@ -23,7 +23,6 @@ export default function Profile() {
     confirmNewPassword: "",
   });
 
-  // Fetch user data and reservations
   useEffect(() => {
     if (!loading && !user) {
       navigate("/login");
@@ -54,14 +53,12 @@ export default function Profile() {
     fetchUserAndReservations();
   }, [user, navigate]);
 
-  // Input handlers
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handlePasswordChange = (e) =>
     setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
 
-  // Update user info
   const handleUpdate = async () => {
     try {
       const res = await axios.put("http://localhost:8081/api/users/me", form);
@@ -74,7 +71,6 @@ export default function Profile() {
     }
   };
 
-  // Change password
   const handleChangePassword = async () => {
     const { oldPassword, newPassword, confirmNewPassword } = passwordForm;
 
@@ -98,7 +94,6 @@ export default function Profile() {
       setPasswordForm({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
       setPasswordSuccess("✅ Password changed successfully!");
 
-      // Auto-hide success message after 3 seconds
       setTimeout(() => {
         setPasswordSuccess("");
       }, 3000);
@@ -111,14 +106,12 @@ export default function Profile() {
         setPasswordError("Something went wrong. Please try again later.");
       }
 
-      // Auto-hide error message after 3 seconds
       setTimeout(() => {
         setPasswordError("");
       }, 3000);
     }
   };
 
-  // Profile.jsx cancel function
   const handleCancelReservation = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this reservation?")) return;
 

@@ -19,7 +19,6 @@ export default function Reservation() {
   const [userBookedStalls, setUserBookedStalls] = useState([]);
   const MAX_STALLS_PER_USER = 3;
 
-  // Fetch stalls
   useEffect(() => {
     if (!loading && !user) {
       navigate("/login");
@@ -41,7 +40,6 @@ export default function Reservation() {
     fetchStalls();
   }, [user, navigate]);
 
-  // Fetch user's existing reservations
   useEffect(() => {
     const fetchUserReservations = async () => {
       try {
@@ -57,7 +55,6 @@ export default function Reservation() {
 
   const remainingLimit = MAX_STALLS_PER_USER - userBookedStalls.length;
 
-  // Confirm reservation
   const handleConfirmReservation = async () => {
     if (selectedStalls.length === 0)
       return alert("Select at least one stall to reserve.");
@@ -68,7 +65,7 @@ export default function Reservation() {
     if (!confirmed) return; 
 
     try {
-      setProcessing(true); // ✅ Start animation
+      setProcessing(true);
 
       const stallIds = selectedStalls.map((s) => s.id);
       const res = await axios.post("http://localhost:8081/api/reservations", { stallIds });
@@ -78,17 +75,15 @@ export default function Reservation() {
         qrCodeBase64: res.data.qrCodeBase64,
       });
 
-      // Refresh stalls
       const stallsRes = await axios.get("/api/stalls");
       setStalls(stallsRes.data);
 
-      // Refresh user booked stalls
       const userRes = await axios.get("/api/reservations/me");
       const bookedIds = userRes.data.flatMap(r => r.stalls.map(s => s.id));
       setUserBookedStalls(bookedIds);
 
-      // Clear current selection
       setSelectedStalls([]);
+      navigate("/genre");
     } catch (err) {
       console.error("❌ Reservation failed:", err);
       alert("Reservation failed. Please try again.");

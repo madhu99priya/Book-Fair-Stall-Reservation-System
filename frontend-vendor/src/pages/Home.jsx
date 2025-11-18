@@ -12,7 +12,6 @@ export default function Home() {
   const navigate = useNavigate();
   const videoRef = useRef(null);
 
-  // Contact form state
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -24,7 +23,6 @@ export default function Home() {
   const [submitStatus, setSubmitStatus] = useState(null);
 
   useEffect(() => {
-    // Ensure video plays on component mount
     if (videoRef.current) {
       videoRef.current.play().catch((error) => {
         console.log("Auto-play prevented:", error);
@@ -32,7 +30,6 @@ export default function Home() {
     }
   }, []);
 
-  // Smooth scroll function with offset for fixed navbar
   const smoothScrollTo = (elementId) => {
     const element = document.getElementById(elementId);
     if (element) {
@@ -41,18 +38,15 @@ export default function Home() {
       const offsetPosition =
         elementPosition + window.pageYOffset - navbarHeight;
 
-      // Custom smooth scroll with easing
       const startPosition = window.pageYOffset;
       const distance = offsetPosition - startPosition;
-      const duration = 800; // 800ms for smooth animation
+      const duration = 800;
       let start = null;
 
-      // Easing function for smooth animation
       const easeInOutCubic = (t) => {
         return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       };
 
-      // Animation function
       const animation = (currentTime) => {
         if (start === null) start = currentTime;
         const timeElapsed = currentTime - start;
@@ -70,7 +64,6 @@ export default function Home() {
     }
   };
 
-  // Handle form input changes - THIS WAS MISSING!
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -78,7 +71,6 @@ export default function Home() {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -121,9 +113,8 @@ export default function Home() {
     <>
       {/* Cinema Modal - Shows EVERY time on this page */}
       <CinemaModal />
-      {/* Main Content */}
+
       <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
-        {/* Background for all sections */}
         <div className="fixed inset-0 z-0 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/50 to-black"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.15)_0%,transparent_70%)]"></div>
@@ -131,7 +122,6 @@ export default function Home() {
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
         </div>
 
-        {/* Navbar - Fixed with high z-index */}
         <div className="fixed top-0 left-0 right-0 z-50">
           <Navbar />
         </div>
