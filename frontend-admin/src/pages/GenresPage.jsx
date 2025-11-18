@@ -19,7 +19,7 @@ export default function GenresPage() {
   );
 
   const createMutation = useMutation({
-    mutationFn: (payload) => genresService.create(payload),
+    mutationFn: (payload) => genresService.createGenre(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['genres'] })
   });
 
@@ -32,7 +32,7 @@ export default function GenresPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => genresService.remove(id),
+    mutationFn: (id) => genresService.deleteGenre(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['genres'] })
   });
 

@@ -11,8 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -120,17 +122,23 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public User addGenresForCurrentUser(List<String> genreNames, String email) {
-        // Call getUserByEmail directly, not userService
+    public User updateGenresForCurrentUser(List<String> genreNames, String email) {
         User user = getUserByEmail(email);
 
-        List<Genre> genres = genreNames.stream()
-                .map(name -> genreService.createGenre(
-                        Genre.builder().name(name).build()
-                ))
+        // Fetch or create genres
+        List<Genre> newGenres = genreNames.stream()
+                .map(name -> genreService.getOrCreateGenre(name))
                 .collect(Collectors.toList());
 
-        user.setGenres(genres);
+        // Merge with existing genres, avoiding duplicates
+        List<Genre> mergedGenres = user.getGenres() == null
+                ? new ArrayList<>(newGenres)
+                : Stream.concat(user.getGenres().stream(), newGenres.stream())
+                        .distinct()
+                        .collect(Collectors.toCollection(ArrayList::new));
+
+        user.setGenres(mergedGenres);
+
         return userRepository.save(user);
     }
 

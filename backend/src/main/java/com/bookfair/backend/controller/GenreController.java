@@ -1,3 +1,5 @@
+// Genre Controller
+
 package com.bookfair.backend.controller;
 
 import com.bookfair.backend.model.Genre;
@@ -6,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/genres")
@@ -19,6 +23,20 @@ public class GenreController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Genre> createGenre(@RequestBody Genre genre){
         return ResponseEntity.ok(genreService.createGenre(genre));
+    }
+
+    // get all genres
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'EXHIBITOR')")
+    public ResponseEntity<List<Genre>> getAllGenres() {
+        return ResponseEntity.ok(genreService.getAllGenres());
+    }
+
+    // update genre
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Genre> updateGenre(@PathVariable Long id, @RequestBody Genre genre) {
+        return ResponseEntity.ok(genreService.updateGenre(id, genre));
     }
 
     // get genre by id
