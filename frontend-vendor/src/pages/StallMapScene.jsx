@@ -12,6 +12,7 @@ function Stall({ stall, selected, onSelect, disabled }) {
     LARGE: [6, 1, 4],
   };
 
+  const color = stall.booked ? "gray" : selected ? "red" : "cyan";
   const getColor = () => {
     if (stall.booked || disabled) return "#6c757d"; // Gray for occupied
     if (selected) return "#6f42c1"; // Purple for selected

@@ -57,6 +57,11 @@ export default function Navbar() {
                   Genres
                 </button>
               )}
+              {user && (
+                <button className={linkClasses} onClick={() => handleNavigation("/reservation")}>
+                  Reservation
+                </button>
+              )}
               {user ? (
                 <button className={linkClasses} onClick={logout}>
                   Logout
