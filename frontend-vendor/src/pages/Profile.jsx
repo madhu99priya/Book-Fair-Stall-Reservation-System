@@ -32,7 +32,7 @@ export default function Profile() {
     const fetchUserAndReservations = async () => {
       try {
         setLoading(true);
-        const resUser = await axios.get("http://localhost:8081/api/users/me");
+        const resUser = await axios.get("/api/users/me");
         setUserData(resUser.data);
         setForm({
           fullName: resUser.data.fullName || "",
@@ -40,11 +40,11 @@ export default function Profile() {
         });
 
         const resReservations = await axios.get(
-          "http://localhost:8081/api/reservations/me"
+          "/api/reservations/me"
         );
         setReservations(resReservations.data);
       } catch (err) {
-        console.error("❌ Failed to fetch user data or reservations:", err);
+        console.error("Failed to fetch user data or reservations:", err);
       } finally {
         setLoading(false);
       }
@@ -61,12 +61,12 @@ export default function Profile() {
 
   const handleUpdate = async () => {
     try {
-      const res = await axios.put("http://localhost:8081/api/users/me", form);
+      const res = await axios.put("/api/users/me", form);
       setUserData(res.data);
       setEditing(false);
       alert("User info updated!");
     } catch (err) {
-      console.error("❌ Update failed:", err);
+      console.error("Update failed:", err);
       alert("Failed to update info. Try again.");
     }
   };
@@ -86,13 +86,13 @@ export default function Profile() {
     }
 
     try {
-      await axios.put("http://localhost:8081/api/users/change-password", {
+      await axios.put("/api/users/change-password", {
         oldPassword,
         newPassword,
       });
 
       setPasswordForm({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
-      setPasswordSuccess("✅ Password changed successfully!");
+      setPasswordSuccess("Password changed successfully!");
 
       setTimeout(() => {
         setPasswordSuccess("");
@@ -101,7 +101,7 @@ export default function Profile() {
       console.error("❌ Password change failed:", err);
 
       if (err.response?.status === 400 || err.response?.status === 401 || err.response?.status === 403) {
-        setPasswordError(err.response.data.message || "❌ Incorrect old password.");
+        setPasswordError(err.response.data.message || "Incorrect old password.");
       } else {
         setPasswordError("Something went wrong. Please try again later.");
       }
@@ -116,7 +116,7 @@ export default function Profile() {
     if (!window.confirm("Are you sure you want to cancel this reservation?")) return;
 
     try {
-      await axios.delete(`http://localhost:8081/api/reservations/${id}`);
+      await axios.delete(`/api/reservations/${id}`);
       alert("Reservation canceled successfully.");
 
       setReservations((prev) =>
@@ -125,7 +125,7 @@ export default function Profile() {
         )
       );
     } catch (err) {
-      console.error("❌ Cancel failed:", err);
+      console.error("Cancel failed:", err);
       alert("Failed to cancel reservation. Try again.");
     }
   };

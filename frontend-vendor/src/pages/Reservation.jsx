@@ -31,7 +31,7 @@ export default function Reservation() {
         const res = await axios.get("/api/stalls");
         setStalls(res.data);
       } catch (err) {
-        console.error("❌ Failed to fetch stalls", err);
+        console.error("Failed to fetch stalls", err);
       } finally {
         setLoading(false);
       }
@@ -47,7 +47,7 @@ export default function Reservation() {
         const bookedIds = res.data.flatMap(r => r.stalls.map(s => s.id));
         setUserBookedStalls(bookedIds);
       } catch (err) {
-        console.error("❌ Failed to fetch user reservations", err);
+        console.error("Failed to fetch user reservations", err);
       }
     };
     fetchUserReservations();
@@ -84,7 +84,7 @@ export default function Reservation() {
 
       setSelectedStalls([]);
     } catch (err) {
-      console.error("❌ Reservation failed:", err);
+      console.error("Reservation failed:", err);
       alert("Reservation failed. Please try again.");
     } finally {
       setProcessing(false);

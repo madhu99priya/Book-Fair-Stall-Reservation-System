@@ -1,3 +1,5 @@
+// StallMapScene.js
+
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Text } from "@react-three/drei";
@@ -13,14 +15,14 @@ function Stall({ stall, selected, onSelect, disabled }) {
   };
 
   const getColor = () => {
-    if (stall.booked || disabled) return "grey"; // occupied
+    if (stall.booked) return "grey"; // occupied
     if (selected) return "red"; // selected
     if (hovered) return "#17a2b8"; // hover
     return "cyan"; // available
   };
 
   const handleClick = () => {
-    if (!stall.booked && !disabled) {
+    if (!stall.booked) {
       onSelect(stall);
     }
   };
@@ -30,7 +32,7 @@ function Stall({ stall, selected, onSelect, disabled }) {
       <mesh
         position={[0, 0.5, 0]}
         onClick={handleClick}
-        onPointerEnter={() => !stall.booked && !disabled && setHovered(true)}
+        onPointerEnter={() => !stall.booked && setHovered(true)}
         onPointerLeave={() => setHovered(false)}
         castShadow
         receiveShadow
@@ -102,7 +104,7 @@ function Ground() {
     >
       <planeGeometry args={[50, 45]} />
       <meshStandardMaterial 
-        color="#ffffffff"
+        color="#ffffff"
         opacity={0} transparent
       />
     </mesh>
