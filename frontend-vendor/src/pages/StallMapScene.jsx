@@ -11,7 +11,7 @@ function Stall({ stall, selected, onSelect }) {
     LARGE: [6, 1, 4],
   };
 
-  const color = stall.booked ? "gray" : selected ? "red" : "green";
+  const color = stall.booked ? "gray" : selected ? "red" : "cyan";
 
   return (
     <group position={[stall.x, 0, stall.z]}>

@@ -28,7 +28,7 @@ export default function Reservation() {
     const fetchStalls = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:8081/api/stalls");
+        const res = await axios.get("/api/stalls");
         setStalls(res.data);
       } catch (err) {
         console.error("❌ Failed to fetch stalls", err);
@@ -43,7 +43,7 @@ export default function Reservation() {
   useEffect(() => {
     const fetchUserReservations = async () => {
       try {
-        const res = await axios.get("http://localhost:8081/api/reservations/me");
+        const res = await axios.get("/api/reservations/me");
         const bookedIds = res.data.flatMap(r => r.stalls.map(s => s.id));
         setUserBookedStalls(bookedIds);
       } catch (err) {
@@ -68,7 +68,7 @@ export default function Reservation() {
       setProcessing(true);
 
       const stallIds = selectedStalls.map((s) => s.id);
-      const res = await axios.post("http://localhost:8081/api/reservations", { stallIds });
+      const res = await axios.post("/api/reservations", { stallIds });
 
       setConfirmation({
         reservedStalls: res.data.reservedStalls,
@@ -83,7 +83,6 @@ export default function Reservation() {
       setUserBookedStalls(bookedIds);
 
       setSelectedStalls([]);
-      navigate("/genre");
     } catch (err) {
       console.error("❌ Reservation failed:", err);
       alert("Reservation failed. Please try again.");
@@ -187,7 +186,10 @@ export default function Reservation() {
               Download QR
             </a>
             <button
-              onClick={() => setConfirmation(null)}
+              onClick={() => {
+                setConfirmation(null);
+                navigate("/genre");
+              }}
               className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-bold"
             >
               Close

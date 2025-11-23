@@ -20,7 +20,10 @@ export default function GenresPage() {
 
   const createMutation = useMutation({
     mutationFn: (payload) => genresService.createGenre(payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['genres'] })
+    onSuccess: () => {
+      alert("Genre added successfully!");
+      queryClient.invalidateQueries({queryKey: ['genres']});
+    }
   });
 
   const updateMutation = useMutation({
@@ -76,7 +79,11 @@ export default function GenresPage() {
           </p>
           <GenreTable
             genres={filteredGenres}
-            onDelete={(id) => deleteMutation.mutate(id)}
+            onDelete={(id) =>{
+              if(window.confirm("Are you sure you want to delete this genre?")){
+                deleteMutation.mutate(id);
+              }
+            }}
             onEdit={(genre) => setEditGenre(genre)}
           />
         </>
