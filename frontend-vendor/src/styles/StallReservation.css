@@ -1,0 +1,358 @@
+.stall-reservation-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.reservation-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: white;
+}
+
+.reservation-header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.reservation-header p {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+.selection-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.view-toggle button {
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  margin: 0 0.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-toggle button.active {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.grid-legend {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-weight: 500;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.legend-color.available {
+  background: linear-gradient(135deg, #00b09b, #96c93d);
+}
+.legend-color.selected {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+.legend-color.occupied {
+  background: linear-gradient(135deg, #bdc3c7, #2c3e50);
+}
+.legend-color.premium {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.stall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  max-width: 1400px;
+  margin: 0 auto 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stall-card {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  font-weight: 600;
+}
+
+.stall-card.available {
+  background: linear-gradient(135deg, #00b09b, #96c93d);
+  color: white;
+}
+
+.stall-card.selected {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-color: #ffffff;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+}
+
+.stall-card.occupied {
+  background: linear-gradient(135deg, #bdc3c7, #2c3e50);
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.stall-card.premium {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: white;
+}
+
+.stall-card:hover:not(.occupied) {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.stall-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stall-id {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.premium-badge {
+  font-size: 1.2rem;
+  color: #ffd700;
+}
+
+.stall-info {
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.stall-size {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.stall-price {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+
+.selected-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 25px;
+  height: 25px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: #667eea;
+  font-weight: 700;
+}
+
+/* Step 2: Enhanced ReservationSummary CSS with !important for visibility */
+.reservation-summary {
+  position: fixed !important;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999 !important;
+  pointer-events: auto;
+}
+
+.summary-card {
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  padding: 2rem;
+  min-width: 350px;
+  color: #2a5298;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+}
+
+.summary-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #1e3c72 !important;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(46, 60, 114, 0.1);
+  color: #333 !important;
+}
+
+.total-amount {
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-top: 2px solid rgba(46, 60, 114, 0.2);
+  margin-top: 1rem;
+  color: #1e3c72 !important;
+}
+
+.proceed-button {
+  padding: 1rem !important;
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease;
+}
+
+.proceed-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.clear-selection {
+  background: rgba(220, 53, 69, 0.8) !important;
+  color: white !important;
+  border: 1px solid rgba(220, 53, 69, 0.5) !important;
+  padding: 1rem !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+.clear-selection:hover {
+  background: rgba(220, 53, 69, 1) !important;
+}
+
+/* 3D Map Container */
+.map-container {
+  height: 70vh;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 2rem auto;
+  overflow: hidden;
+}
+
+/* Map Legend Styles */
+.map-legend {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  margin: 0 auto 2rem;
+  max-width: 800px;
+  color: white;
+}
+
+.map-legend h4 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.legend-items {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stall-reservation-container {
+    padding: 1rem;
+  }
+
+  .stall-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .grid-legend {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .reservation-header h1 {
+    font-size: 2rem;
+  }
+
+  .reservation-summary {
+    position: static !important;
+    transform: none !important;
+    margin-top: 2rem;
+    padding: 0 1rem;
+  }
+
+  .summary-card {
+    min-width: 100% !important;
+  }
+
+  .legend-items {
+    gap: 1rem;
+  }
+}

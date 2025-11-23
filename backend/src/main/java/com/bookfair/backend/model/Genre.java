@@ -1,10 +1,8 @@
-// Genre Model
-
 package com.bookfair.backend.model;
 
 import java.util.List;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,14 +28,17 @@ public class Genre {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Genre)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Genre))
+            return false;
         Genre genre = (Genre) o;
-        return name.equalsIgnoreCase(genre.name);
+        return Objects.equals(name != null ? name.toLowerCase() : null,
+                genre.name != null ? genre.name.toLowerCase() : null);
     }
 
     @Override
     public int hashCode() {
-        return name.toLowerCase().hashCode();
+        return name != null ? name.toLowerCase().hashCode() : 0;
     }
 }
