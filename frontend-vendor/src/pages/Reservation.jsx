@@ -17,12 +17,8 @@ export default function Reservation() {
   const [userBookedStalls, setUserBookedStalls] = useState([]);
   const MAX_STALLS_PER_USER = 3;
 
+  // Always fetch stalls regardless of login status
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/login");
-      return;
-    }
-
     const fetchStalls = async () => {
       try {
         setLoading(true);
@@ -36,9 +32,12 @@ export default function Reservation() {
     };
 
     fetchStalls();
-  }, [user, navigate]);
+  }, []); // Remove user dependency
 
+  // Only fetch user reservations if user is logged in
   useEffect(() => {
+    if (!user) return; // Exit early if not logged in
+
     const fetchUserReservations = async () => {
       try {
         const res = await axios.get("/api/reservations/me");
@@ -46,14 +45,23 @@ export default function Reservation() {
         setUserBookedStalls(bookedIds);
       } catch (err) {
         console.error("Failed to fetch user reservations", err);
+        setUserBookedStalls([]); // Reset on error
       }
     };
+    
     fetchUserReservations();
-  }, []);
+  }, [user]); // Only run when user changes
 
-  const remainingLimit = MAX_STALLS_PER_USER - userBookedStalls.length;
+  const remainingLimit = user ? MAX_STALLS_PER_USER - userBookedStalls.length : 0;
 
   const handleConfirmReservation = async () => {
+    // Check if user is logged in first
+    if (!user) {
+      alert("Please log in to make a reservation.");
+      navigate("/login");
+      return;
+    }
+
     if (selectedStalls.length === 0)
       return alert("Select at least one stall to reserve.");
 
@@ -89,6 +97,16 @@ export default function Reservation() {
     }
   };
 
+  // Handle stall selection - require login for selection
+  const handleStallSelection = (stall) => {
+    if (!user) {
+      alert("Please log in to select stalls for reservation.");
+      navigate("/login");
+      return;
+    }
+    // Allow selection logic here
+  };
+
   if (loading)
     return (
       <div className="h-screen bg-gray-900 text-white flex items-center justify-center overflow-hidden">
@@ -108,7 +126,10 @@ export default function Reservation() {
           <div className="text-center mb-6">
             <h1 className="text-4xl font-bold mb-2">Reserve Your Stall</h1>
             <p className="text-gray-300">
-              Select up to {MAX_STALLS_PER_USER} stalls for your business.
+              {user 
+                ? `Select up to ${MAX_STALLS_PER_USER} stalls for your business.`
+                : "Browse available stalls. Log in to make reservations."
+              }
             </p>
           </div>
 
@@ -120,38 +141,61 @@ export default function Reservation() {
               userBookedStalls={userBookedStalls}
               remainingLimit={remainingLimit}
               showLegend={false}
+              isLoggedIn={!!user} // Pass login status to StallMapScene
             />
           </div>
         </div>
 
         <div className="fixed right-0 top-20 w-72 h-[calc(100vh-5rem)] bg-gray-800 border-l border-gray-700 shadow-2xl z-40 flex flex-col">
           <div className="bg-gray-800 p-4 border-b border-gray-700">
-            <h2 className="text-lg font-bold text-center text-white">Reservation Control</h2>
+            <h2 className="text-lg font-bold text-center text-white">
+              {user ? "Reservation Control" : "Stall Information"}
+            </h2>
           </div>
           
           <div className="flex-1 p-6 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto">
-              <div className="bg-gray-700/50 rounded-lg p-4 mb-4 border border-gray-600">
-                <h3 className="text-sm font-semibold text-gray-300 mb-3">Selection Status</h3>
-                <div className="space-y-2">
-                  <p className="text-sm flex justify-between">
-                    <span>Selected:</span>
-                    <span className="text-cyan-400 font-bold">{selectedStalls.length} / {MAX_STALLS_PER_USER}</span>
+              {/* Show login prompt if not logged in */}
+              {!user && (
+                <div className="bg-blue-600/20 rounded-lg p-4 mb-4 border border-blue-500">
+                  <h3 className="text-sm font-semibold text-blue-300 mb-2">Login Required</h3>
+                  <p className="text-xs text-blue-200 mb-3">
+                    Please log in to select and reserve stalls.
                   </p>
-                  <p className="text-sm flex justify-between">
-                    <span>Remaining:</span>
-                    <span className="text-yellow-400 font-bold">{remainingLimit}</span>
-                  </p>
-                  {userBookedStalls.length > 0 && (
-                    <p className="text-sm flex justify-between">
-                      <span>Already booked:</span>
-                      <span className="text-green-400 font-bold">{userBookedStalls.length}</span>
-                    </p>
-                  )}
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg font-bold text-white transition-all duration-200 text-sm"
+                  >
+                    Login Now
+                  </button>
                 </div>
-              </div>
+              )}
 
-              {selectedStalls.length > 0 && (
+              {/* Selection info - only show if logged in */}
+              {user && (
+                <div className="bg-gray-700/50 rounded-lg p-4 mb-4 border border-gray-600">
+                  <h3 className="text-sm font-semibold text-gray-300 mb-3">Selection Status</h3>
+                  <div className="space-y-2">
+                    <p className="text-sm flex justify-between">
+                      <span>Selected:</span>
+                      <span className="text-cyan-400 font-bold">{selectedStalls.length} / {MAX_STALLS_PER_USER}</span>
+                    </p>
+                    <p className="text-sm flex justify-between">
+                      <span>Remaining:</span>
+                      <span className="text-yellow-400 font-bold">{remainingLimit}</span>
+                    </p>
+                    {userBookedStalls.length > 0 && (
+                      <p className="text-sm flex justify-between">
+                        <span>Already booked:</span>
+                        <span className="text-green-400 font-bold">{userBookedStalls.length}</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Selected stalls list - only show if logged in and has selections */}
+              {user && selectedStalls.length > 0 && (
                 <div className="bg-gray-700/50 rounded-lg p-4 mb-4 border border-gray-600">
                   <h3 className="text-sm font-semibold text-gray-300 mb-3">Selected Stalls</h3>
                   <ul className="space-y-2 max-h-32 overflow-y-auto">
@@ -165,16 +209,19 @@ export default function Reservation() {
                 </div>
               )}
 
+              {/* Legend - always show */}
               <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                 <h3 className="text-sm font-semibold text-gray-300 mb-3">Stall Legend</h3>
                 <div className="space-y-3 text-xs">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 bg-red-500 rounded-sm"></div>
-                      <span>Selected</span>
+                  {user && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-red-500 rounded-sm"></div>
+                        <span>Selected</span>
+                      </div>
+                      <span className="text-gray-400">Click to deselect</span>
                     </div>
-                    <span className="text-gray-400">Click to deselect</span>
-                  </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 bg-gray-500 rounded-sm"></div>
@@ -187,74 +234,77 @@ export default function Reservation() {
                       <div className="w-4 h-4 bg-cyan-400 rounded-sm"></div>
                       <span>Available</span>
                     </div>
-                    <span className="text-gray-400">Click to select</span>
+                    <span className="text-gray-400">
+                      {user ? "Click to select" : "View only"}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex-shrink-0 space-y-3 pt-4 border-t border-gray-600 mt-4">
-              <button
-                onClick={handleConfirmReservation}
-                disabled={processing || selectedStalls.length === 0}
-                className={`w-full px-6 py-4 rounded-lg font-bold transition-all duration-200 text-sm ${
-                  processing || selectedStalls.length === 0
-                    ? "bg-gray-600 cursor-not-allowed opacity-50" 
-                    : "bg-blue-500 hover:bg-blue-600 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                }`}
-              >
-                {processing ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg
-                      className="animate-spin h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      ></path>
-                    </svg>
-                    Processing...
-                  </span>
-                ) : (
-                  `Confirm Reservation (${selectedStalls.length})`
-                )}
-              </button>
+            {/* Action buttons - only show if logged in */}
+            {user && (
+              <div className="flex-shrink-0 space-y-3 pt-4 border-t border-gray-600 mt-4">
+                <button
+                  onClick={handleConfirmReservation}
+                  disabled={processing || selectedStalls.length === 0}
+                  className={`w-full px-6 py-4 rounded-lg font-bold transition-all duration-200 text-sm ${
+                    processing || selectedStalls.length === 0
+                      ? "bg-gray-600 cursor-not-allowed opacity-50" 
+                      : "bg-blue-500 hover:bg-blue-600 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  }`}
+                >
+                  {processing ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg
+                        className="animate-spin h-4 w-4 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        ></path>
+                      </svg>
+                      Processing...
+                    </span>
+                  ) : (
+                    `Confirm Reservation (${selectedStalls.length})`
+                  )}
+                </button>
 
-              <button
-                onClick={() => setSelectedStalls([])}
-                disabled={selectedStalls.length === 0}
-                className={`w-full px-6 py-3 rounded-lg font-bold transition-all duration-200 text-sm ${
-                  selectedStalls.length === 0
-                    ? "bg-gray-700 opacity-50 cursor-not-allowed"
-                    : "bg-gray-700 hover:bg-gray-600 hover:shadow-lg transform hover:-translate-y-0.5"
-                }`}
-              >
-                Clear Selection
-              </button>
-            </div>
+                <button
+                  onClick={() => setSelectedStalls([])}
+                  disabled={selectedStalls.length === 0}
+                  className={`w-full px-6 py-3 rounded-lg font-bold transition-all duration-200 text-sm ${
+                    selectedStalls.length === 0
+                      ? "bg-gray-700 opacity-50 cursor-not-allowed"
+                      : "bg-gray-700 hover:bg-gray-600 hover:shadow-lg transform hover:-translate-y-0.5"
+                  }`}
+                >
+                  Clear Selection
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Balanced Size Confirmation Modal */}
+      {/* Confirmation Modal - same as before */}
       {confirmation && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl border border-gray-600 w-full max-w-md mx-auto transform animate-slideUp">
-            {/* Modal Header - Balanced spacing */}
             <div className="relative p-5 pb-3">
-              {/* Success Icon - Medium size */}
               <div className="flex justify-center mb-4">
                 <div className="w-18 h-18 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
                   <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,9 +321,7 @@ export default function Reservation() {
               </p>
             </div>
 
-            {/* Modal Content - Balanced spacing */}
             <div className="px-5 pb-5">
-              {/* QR Code Section */}
               <div className="mb-5">
                 <h3 className="text-lg font-semibold text-gray-200 mb-4 flex items-center justify-center">
                   <svg className="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -300,7 +348,6 @@ export default function Reservation() {
                 </div>
               </div>
 
-              {/* Action Buttons - Balanced spacing */}
               <div className="space-y-3">
                 <a
                   href={confirmation.qrCodeBase64}
@@ -328,7 +375,6 @@ export default function Reservation() {
         </div>
       )}
 
-      {/* Add custom animations */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; }
