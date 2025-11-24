@@ -22,7 +22,6 @@ export default function ReservationsPage() {
     mutationFn: (id) => reservationsService.cancel(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['reservations'] });
-      // Update activeReservation status immediately if it's the same
       if (activeReservation?.id === id) {
         setActiveReservation({ ...activeReservation, status: 'CANCELLED' });
       }
@@ -112,14 +111,14 @@ export default function ReservationsPage() {
       </div>
 
       {/* Search & Filter */}
-      <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+      <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'stretch'}}>
         <input
           type="text"
           placeholder="Search by name or ID..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
-            flex: 1,
+            width: '100%',
             padding: '0.5rem',
             border: '1px solid #e2e8f0',
             borderRadius: '4px',
