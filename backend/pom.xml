@@ -23,32 +23,32 @@
     </properties>
 
     <dependencies>
-        <!-- 🌐 Spring Boot Web -->
+        <!-- Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- 🗄️ Spring Data JPA -->
+        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- 🐘 PostgreSQL Driver -->
+        <!-- PostgreSQL Driver -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- 🔒 Spring Security -->
+        <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- 💡 Lombok -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -62,7 +62,7 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- ⚙️ DevTools (for live reload during development) -->
+        <!-- DevTools (for live reload during development) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -70,13 +70,13 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- 📧 Mail support -->
+        <!-- Mail support -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
-        <!-- 🔐 JWT (JSON Web Tokens for authentication) -->
+        <!-- JWT (JSON Web Tokens for authentication) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -97,7 +97,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- 📷 ZXing (QR code generation) -->
+        <!-- ZXing (QR code generation) -->
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>core</artifactId>
@@ -110,7 +110,7 @@
             <version>3.5.2</version>
         </dependency>
 
-        <!-- 🧪 Testing -->
+        <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -132,7 +132,7 @@
 
     <build>
         <plugins>
-            <!-- 🚀 Spring Boot Maven Plugin (only once!) -->
+            <!-- Spring Boot Maven Plugin (only once!) -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
