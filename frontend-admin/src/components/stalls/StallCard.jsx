@@ -1,7 +1,6 @@
 import StatusBadge from '../common/StatusBadge.jsx';
 
 export default function StallCard({ stall, onEdit, onDelete }) {
-  // Determine display status
   const status = stall.status
     ? stall.status.toUpperCase()
     : stall.booked
@@ -23,7 +22,6 @@ export default function StallCard({ stall, onEdit, onDelete }) {
       <strong>{stall.name}</strong>
       <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Size: {stall.size}</div>
 
-      {/* Status badge */}
       <StatusBadge status={status} />
 
       <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.5rem' }}>

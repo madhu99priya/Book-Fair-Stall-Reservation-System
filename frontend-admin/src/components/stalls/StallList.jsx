@@ -10,7 +10,6 @@ export default function StallList({ stalls, onEdit, onDelete, onSelect, selected
       }}
     >
       {stalls.map((stall) => {
-        // Ensure default status is AVAILABLE if missing
         const status = stall.status || (stall.booked ? "BOOKED" : "AVAILABLE");
 
         return (

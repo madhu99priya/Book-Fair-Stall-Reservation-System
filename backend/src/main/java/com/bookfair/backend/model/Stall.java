@@ -22,7 +22,7 @@ public class Stall {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Size size; // SMALL, MEDIUM, LARGE
+    private Size size;
 
     @NonNull
     private Double price;
