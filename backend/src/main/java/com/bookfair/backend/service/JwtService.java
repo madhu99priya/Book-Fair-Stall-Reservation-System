@@ -1,9 +1,13 @@
 package com.bookfair.backend.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 import com.bookfair.backend.model.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +21,8 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hour
+    // 24 hours token expiration
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 hours
     private static final String SECRET_KEY = "your_super_secret_key_that_is_at_least_256_bits_long!";
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
@@ -25,7 +30,6 @@ public class JwtService {
     // Generate JWT token
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        
         claims.put("role", user.getRole().name());
 
         return Jwts.builder()
@@ -33,35 +37,48 @@ public class JwtService {
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key, SignatureAlgorithm.HS256)  // updated usage
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ✅ Extract username from token
-    public String extractUsername(String token) {
+    // Extract username from token with exception handling
+    public String extractUsername(String token)
+            throws ExpiredJwtException, MalformedJwtException, SignatureException, UnsupportedJwtException {
         return getClaims(token).getSubject();
     }
 
-    // ✅ Extract role from token
-    public String extractRole(String token) {
+    // Extract role from token with exception handling
+    public String extractRole(String token)
+            throws ExpiredJwtException, MalformedJwtException, SignatureException, UnsupportedJwtException {
         return (String) getClaims(token).get("role");
     }
 
-    // Validate token
+    // Validate token with proper exception handling
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException e) {
+            return false;
+        }
     }
 
-    private Claims getClaims(String token) {
+    // Check if token is expired with exception handling
+    public boolean isTokenExpired(String token) {
+        try {
+            return getClaims(token).getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true; // Token is definitely expired
+        }
+    }
+
+    // Get claims with proper exception propagation
+    private Claims getClaims(String token)
+            throws ExpiredJwtException, MalformedJwtException, SignatureException, UnsupportedJwtException {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody(); 
-    }
-
-    private boolean isTokenExpired(String token) {
-        return getClaims(token).getExpiration().before(new Date());
+                .getBody();
     }
 }

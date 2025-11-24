@@ -1,5 +1,3 @@
-// JwtAuthFilter.java
-
 package com.bookfair.backend.config;
 
 import com.bookfair.backend.service.JwtService;
@@ -18,6 +16,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 
 import java.io.IOException;
 
@@ -26,14 +28,13 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final CustomUserDetailsService userService; // used to load user details
+    private final CustomUserDetailsService userService;
 
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         // 1. Get Authorization header
         final String authHeader = request.getHeader("Authorization");
@@ -46,25 +47,58 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         jwt = authHeader.substring(7); // remove "Bearer "
-        username = jwtService.extractUsername(jwt);
 
-        // 2. Validate token and set Security Context
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(username); // make sure UserService implements UserDetailsService
+        try {
+            username = jwtService.extractUsername(jwt);
 
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
+            // 2. Validate token and set Security Context
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userService.loadUserByUsername(username);
 
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (ExpiredJwtException e) {
+            // Token expired - return 401 with clear message
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter()
+                    .write("{\"error\":\"TOKEN_EXPIRED\",\"message\":\"JWT token has expired. Please login again.\"}");
+            return;
+        } catch (MalformedJwtException e) {
+            // Malformed token
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"INVALID_TOKEN\",\"message\":\"JWT token is malformed.\"}");
+            return;
+        } catch (SignatureException e) {
+            // Invalid signature
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter()
+                    .write("{\"error\":\"INVALID_SIGNATURE\",\"message\":\"JWT token signature is invalid.\"}");
+            return;
+        } catch (UnsupportedJwtException e) {
+            // Unsupported token
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"UNSUPPORTED_TOKEN\",\"message\":\"JWT token is unsupported.\"}");
+            return;
+        } catch (Exception e) {
+            // Any other exception
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"TOKEN_ERROR\",\"message\":\"Error processing JWT token.\"}");
+            return;
         }
 
         // 3. Continue the filter chain
