@@ -23,7 +23,6 @@ public class ReservationService {
     // Create a new reservation
     public Reservation createReservation(User user, List<Long> stallIds) {
         
-        // Count how many stalls this user has already booked
         Long existingStalls = reservationRepository.countStallsByUser(user);
         if (existingStalls + stallIds.size() > MAX_STALLS_PER_USER) {
             throw new RuntimeException("You cannot book more than " + MAX_STALLS_PER_USER + " stalls in total.");
@@ -35,12 +34,10 @@ public class ReservationService {
             throw new RuntimeException("One or more stalls not found");
         }
 
-        // Check if any stall is already booked
         for (Stall stall : stalls) {
             if (stall.isBooked()) {
                 throw new RuntimeException("Stall " + stall.getName() + " is already booked");
             }
-            // Mark stall as booked
             stall.setBooked(true);
         }
         stallRepository.saveAll(stalls);
@@ -59,22 +56,18 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
-        // Admins can confirm any reservation; users can confirm their own
         if (!reservation.getUser().getId().equals(user.getId())
                 && user.getRole() != User.Role.ADMIN) {
             throw new RuntimeException("You are not authorized to confirm this reservation");
         }
 
-        // Only allow confirming if currently BOOKED
         if (reservation.getStatus() != Reservation.Status.BOOKED) {
             throw new RuntimeException("Only BOOKED reservations can be confirmed");
         }
 
-        // Set status to CONFIRMED and update updatedAt
         reservation.setStatus(Reservation.Status.CONFIRMED);
         reservation.setUpdatedAt(LocalDateTime.now());
 
-        // Ensure stalls remain booked
         for (Stall stall : reservation.getStalls()) {
             stall.setBooked(true);
             stallRepository.save(stall);
@@ -98,18 +91,15 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
-        // Admins can cancel any reservation; users can cancel their own
         if (!reservation.getUser().getId().equals(user.getId()) 
                 && user.getRole() != User.Role.ADMIN) {
             throw new RuntimeException("You are not authorized to cancel this reservation");
         }
 
-        // Mark reservation as CANCELLED instead of deleting
         reservation.setStatus(Reservation.Status.CANCELLED);
         reservation.setUpdatedAt(LocalDateTime.now());
         reservationRepository.save(reservation);
 
-        // Free up the stalls
         for (Stall stall : reservation.getStalls()) {
             stall.setBooked(false);
             stallRepository.save(stall);

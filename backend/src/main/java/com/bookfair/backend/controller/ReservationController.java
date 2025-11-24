@@ -44,7 +44,6 @@ public class ReservationController {
             }
             User user = userService.getUserByEmail(authentication.getName());
 
-            // Create reservation via service (enforces max 3 stalls)
             Reservation reservation;
             try {
                 reservation = reservationService.createReservation(user, stallIds);
@@ -53,11 +52,9 @@ public class ReservationController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Reserved stalls
             List<Stall> reservedStalls = reservation.getStalls();
             response.put("reservedStalls", reservedStalls);
 
-            // Generate QR code
             String qrContent = String.format(
                     "Reservation IDs: %s\nUser: %s\nStalls: %s\nTime: %s",
                     reservation.getId(),
@@ -69,11 +66,9 @@ public class ReservationController {
             byte[] qrBytes = null;
             String qrCodeBase64 = null;
             try {
-                // Generate QR code as Base64 (for frontend)
                 qrCodeBase64 = qrCodeService.generateQRCodeBase64(qrContent);
                 response.put("qrCodeBase64", qrCodeBase64);
 
-                // Convert Base64 to bytes for email attachment
                 qrBytes = java.util.Base64.getDecoder().decode(
                         qrCodeBase64.replaceFirst("^data:image/png;base64,", "")
                 );
@@ -81,7 +76,6 @@ public class ReservationController {
                 System.err.println("QR generation failed: " + e.getMessage());
             }
 
-            // Send email with QR code
             if (qrBytes != null && user.getEmail() != null) {
                     String subject = "Your Stall Reservation Confirmation";
                     String bodyText = String.format(

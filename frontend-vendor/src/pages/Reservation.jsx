@@ -103,10 +103,7 @@ export default function Reservation() {
   return (
     <div className="h-screen bg-gray-900 text-white relative overflow-hidden">
       <Navbarauth />
-      
-      {/* Main content area */}
       <div className="flex h-full">
-        {/* Left side - Map and title only, no legend */}
         <div className="flex-1 p-6 pt-24 pr-80 flex flex-col">
           <div className="text-center mb-6">
             <h1 className="text-4xl font-bold mb-2">Reserve Your Stall</h1>
@@ -115,7 +112,6 @@ export default function Reservation() {
             </p>
           </div>
 
-          {/* Map container - takes remaining space, NO LEGEND HERE */}
           <div className="flex-1 min-h-0">
             <StallMapScene
               stalls={stalls}
@@ -128,17 +124,13 @@ export default function Reservation() {
           </div>
         </div>
 
-        {/* Right side - Control panel positioned below navbar */}
         <div className="fixed right-0 top-20 w-72 h-[calc(100vh-5rem)] bg-gray-800 border-l border-gray-700 shadow-2xl z-40 flex flex-col">
-          {/* Control panel header */}
           <div className="bg-gray-800 p-4 border-b border-gray-700">
             <h2 className="text-lg font-bold text-center text-white">Reservation Control</h2>
           </div>
           
-          {/* Control panel content */}
           <div className="flex-1 p-6 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto">
-              {/* Selection info */}
               <div className="bg-gray-700/50 rounded-lg p-4 mb-4 border border-gray-600">
                 <h3 className="text-sm font-semibold text-gray-300 mb-3">Selection Status</h3>
                 <div className="space-y-2">
@@ -159,7 +151,6 @@ export default function Reservation() {
                 </div>
               </div>
 
-              {/* Selected stalls list */}
               {selectedStalls.length > 0 && (
                 <div className="bg-gray-700/50 rounded-lg p-4 mb-4 border border-gray-600">
                   <h3 className="text-sm font-semibold text-gray-300 mb-3">Selected Stalls</h3>
@@ -174,7 +165,6 @@ export default function Reservation() {
                 </div>
               )}
 
-              {/* Legend - only in control panel */}
               <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                 <h3 className="text-sm font-semibold text-gray-300 mb-3">Stall Legend</h3>
                 <div className="space-y-3 text-xs">
@@ -203,7 +193,6 @@ export default function Reservation() {
               </div>
             </div>
 
-            {/* Action buttons at bottom of panel */}
             <div className="flex-shrink-0 space-y-3 pt-4 border-t border-gray-600 mt-4">
               <button
                 onClick={handleConfirmReservation}
@@ -259,7 +248,6 @@ export default function Reservation() {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
       {confirmation && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-xl p-8 w-full max-w-md flex flex-col items-center border border-gray-600 shadow-2xl max-h-[90vh] overflow-y-auto">

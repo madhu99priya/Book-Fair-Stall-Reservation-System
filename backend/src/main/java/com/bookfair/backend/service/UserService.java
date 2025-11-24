@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +31,22 @@ public class UserService implements UserDetailsService {
     // Register a new user
     public User registerUser(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Email already exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // Set default role if null
         if (user.getRole() == null) {
             user.setRole(User.Role.EXHIBITOR);
         }
+
+        if (user.getContactNumber() == null || user.getContactNumber().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Contact number is required");
+        }
+
+        if (!user.getContactNumber().matches("^\\+?\\d{10,15}$")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid contact number format");
+        }
+
         return userRepository.save(user);
     }
 
@@ -79,6 +90,10 @@ public class UserService implements UserDetailsService {
             user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         }
 
+        if (updatedUser.getContactNumber() != null) {
+            user.setContactNumber(updatedUser.getContactNumber());
+        }
+
         return userRepository.save(user);
     }
 
@@ -91,19 +106,16 @@ public class UserService implements UserDetailsService {
 
 
     public void changePassword(String email, String oldPassword, String newPassword) {
-        User user = getUserByEmail(email); // fetch user by email
+        User user = getUserByEmail(email);
 
-        // Check if old password matches
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new RuntimeException("Old password is incorrect");
         }
 
-        // Encode and update new password
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
     
-    // Implement UserDetailsService for JWT auth
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
@@ -125,12 +137,10 @@ public class UserService implements UserDetailsService {
     public User updateGenresForCurrentUser(List<String> genreNames, String email) {
         User user = getUserByEmail(email);
 
-        // Fetch or create genres
         List<Genre> newGenres = genreNames.stream()
                 .map(name -> genreService.getOrCreateGenre(name))
                 .collect(Collectors.toList());
 
-        // Merge with existing genres, avoiding duplicates
         List<Genre> mergedGenres = user.getGenres() == null
                 ? new ArrayList<>(newGenres)
                 : Stream.concat(user.getGenres().stream(), newGenres.stream())
@@ -141,6 +151,4 @@ public class UserService implements UserDetailsService {
 
         return userRepository.save(user);
     }
-
-
 }

@@ -11,7 +11,7 @@ export default function Profile() {
   const [userData, setUserData] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ fullName: "", email: "" });
+  const [form, setForm] = useState({ fullName: "", email: "", contactNumber: ""});
   const [loading, setLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
@@ -37,6 +37,7 @@ export default function Profile() {
         setForm({
           fullName: resUser.data.fullName || "",
           email: resUser.data.email || "",
+          contactNumber: resUser.data.contactNumber || "",
         });
 
         const resReservations = await axios.get(
@@ -98,7 +99,7 @@ export default function Profile() {
         setPasswordSuccess("");
       }, 3000);
     } catch (err) {
-      console.error("❌ Password change failed:", err);
+      console.error("Password change failed:", err);
 
       if (err.response?.status === 400 || err.response?.status === 401 || err.response?.status === 403) {
         setPasswordError(err.response.data.message || "Incorrect old password.");
@@ -160,6 +161,16 @@ export default function Profile() {
                 type="email"
                 name="email"
                 value={form.email}
+                onChange={handleChange}
+                className="w-full p-2 rounded bg-gray-700 text-white"
+              />
+            </div>
+            <div>
+              <label className="block mb-1">Contact Number</label>
+              <input
+                type="text"
+                name="contactNumber"
+                value={form.contactNumber}
                 onChange={handleChange}
                 className="w-full p-2 rounded bg-gray-700 text-white"
               />
@@ -249,6 +260,10 @@ export default function Profile() {
             <p>
               <span className="font-semibold">Email:</span> {userData.email}
             </p>
+            <p>
+              <span className="font-semibold">Contact Number:</span> {userData.contactNumber}
+            </p>
+
             <button
               onClick={() => setEditing(true)}
               className="mt-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 rounded"
@@ -301,7 +316,6 @@ export default function Profile() {
                   )}
                 </ul>
 
-                {/* Cancel button only if reservation is not CANCELLED */}
                 {res.status === "BOOKED" && (
                 <button
                   onClick={() => handleCancelReservation(res.id)}
