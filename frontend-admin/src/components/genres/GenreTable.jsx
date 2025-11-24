@@ -3,6 +3,18 @@ import DataTable from '../common/DataTable.jsx';
 
 export default function GenreTable({ genres, onDelete, onEdit, onViewUsers }) {
 
+  const [hoverStates, setHoverStates] = useState({});
+
+  const handleHover = (id, type, value) => {
+    setHoverStates((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [type]: value
+      }
+    }));
+  };
+
   const columns = [
     { key: 'id', title: 'ID' },
     { key: 'name', title: 'Name' },
@@ -10,15 +22,13 @@ export default function GenreTable({ genres, onDelete, onEdit, onViewUsers }) {
       key: 'actions',
       title: 'Actions',
       render: (_, row) => {
-        const [hoverEdit, setHoverEdit] = useState(false);
-        const [hoverView, setHoverView] = useState(false);
-        const [hoverDelete, setHoverDelete] = useState(false);
+        const hover = hoverStates[row.id] || {};
 
         return (
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button
               style={{
-                background: hoverEdit ? "#000000ff" : "#210da4ff",
+                background: hover.edit ? "#000000ff" : "#210da4ff",
                 color: "#fff",
                 padding: "0.25rem 0.75rem",
                 border: "none",
@@ -27,8 +37,8 @@ export default function GenreTable({ genres, onDelete, onEdit, onViewUsers }) {
                 width: "20%",
                 transition: "background 0.2s"
               }}
-              onMouseEnter={() => setHoverEdit(true)}
-              onMouseLeave={() => setHoverEdit(false)}
+              onMouseEnter={() => handleHover(row.id, 'edit', true)}
+              onMouseLeave={() => handleHover(row.id, 'edit', false)}
               onClick={() => onEdit(row)}
             >
               Edit
@@ -36,7 +46,7 @@ export default function GenreTable({ genres, onDelete, onEdit, onViewUsers }) {
 
             <button
               style={{
-                background: hoverView ? '#000000ff' : '#4429b4ff',
+                background: hover.view ? '#000000ff' : '#4429b4ff',
                 color: '#fff',
                 padding: '0.25rem 0.75rem',
                 border: 'none',
@@ -45,8 +55,8 @@ export default function GenreTable({ genres, onDelete, onEdit, onViewUsers }) {
                 width: '20%',
                 transition: 'background 0.2s'
               }}
-              onMouseEnter={() => setHoverView(true)}
-              onMouseLeave={() => setHoverView(false)}
+              onMouseEnter={() => handleHover(row.id, 'view', true)}
+              onMouseLeave={() => handleHover(row.id, 'view', false)}
               onClick={() => onViewUsers(row)}
             >
               View Users
@@ -54,7 +64,7 @@ export default function GenreTable({ genres, onDelete, onEdit, onViewUsers }) {
 
             <button
               style={{
-                background: hoverDelete ? '#dc2626' : '#ef4444',
+                background: hover.delete ? '#dc2626' : '#ef4444',
                 color: '#fff',
                 padding: '0.25rem 0.75rem',
                 border: 'none',
@@ -63,8 +73,8 @@ export default function GenreTable({ genres, onDelete, onEdit, onViewUsers }) {
                 width: '20%',
                 transition: 'background 0.2s'
               }}
-              onMouseEnter={() => setHoverDelete(true)}
-              onMouseLeave={() => setHoverDelete(false)}
+              onMouseEnter={() => handleHover(row.id, 'delete', true)}
+              onMouseLeave={() => handleHover(row.id, 'delete', false)}
               onClick={() => onDelete(row.id)}
             >
               Delete
