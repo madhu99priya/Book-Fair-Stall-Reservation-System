@@ -38,3 +38,9 @@
   cursor: pointer;
   line-height: 1;
 }
+
+@media (max-width: 640px) {
+  .modal-panel {
+    width: 95%;
+  }
+}
