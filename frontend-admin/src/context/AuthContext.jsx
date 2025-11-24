@@ -39,6 +39,8 @@ export default function AuthProvider({ children }) {
 
   // Logout function
   const logout = useCallback(() => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
     clearToken();
     setToken(null);
     setUser(null);

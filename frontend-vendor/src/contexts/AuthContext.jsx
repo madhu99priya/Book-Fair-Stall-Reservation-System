@@ -1,4 +1,4 @@
-// src/contexts/AuthContext.jsx
+// AuthContext.jsx
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +10,6 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [loading, setLoading] = useState(true);
 
-  // Fetch user if token exists
   useEffect(() => {
     const fetchUser = async () => {
       if (!token) {
@@ -28,7 +27,7 @@ export function AuthProvider({ children }) {
         const userData = await res.json();
         setUser(userData);
       } catch (err) {
-        console.error("❌ Failed to fetch user on app load:", err);
+        console.error("Failed to fetch user on app load:", err);
         setToken("");
         localStorage.removeItem("token");
       } finally {
@@ -51,7 +50,7 @@ export function AuthProvider({ children }) {
       throw new Error("Login failed");
     }
 
-    const data = await res.json(); // backend returns { token: "..." }
+    const data = await res.json();
     setToken(data.token);
     localStorage.setItem("token", data.token);
 
@@ -63,7 +62,7 @@ export function AuthProvider({ children }) {
     const userData = await userRes.json();
     setUser(userData);
 
-    navigate("/reservation"); // redirect after login
+    navigate("/reservation");
   };
 
   // register function
@@ -86,6 +85,8 @@ export function AuthProvider({ children }) {
 
   // logout function
   const logout = () => {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
     setToken("");
     setUser(null);
     localStorage.removeItem("token");
