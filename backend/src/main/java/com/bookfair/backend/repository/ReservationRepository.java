@@ -12,7 +12,6 @@ import java.util.List;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findByUser(User user);
 
-    // Count total number of stalls booked by a user
     @Query("SELECT COUNT(s) FROM Reservation r JOIN r.stalls s WHERE r.user = :user")
     Long countStallsByUser(User user);
 }

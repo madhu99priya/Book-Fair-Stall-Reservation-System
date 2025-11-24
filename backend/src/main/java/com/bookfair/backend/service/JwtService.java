@@ -21,7 +21,6 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    // 24 hours token expiration
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 hours
     private static final String SECRET_KEY = "your_super_secret_key_that_is_at_least_256_bits_long!";
 

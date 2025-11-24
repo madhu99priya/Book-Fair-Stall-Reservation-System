@@ -32,10 +32,9 @@ public class MailService {
 
         helper.setTo(toEmail);
         helper.setSubject(subject);
-        helper.setText(text, true); // true = HTML content
+        helper.setText(text, true);
 
         if (qrBytes != null && qrBytes.length > 0) {
-            // Attach QR code
             DataSource dataSource = new jakarta.mail.util.ByteArrayDataSource(qrBytes, "image/png");
             helper.addAttachment("QR_Pass.png", dataSource);
         }

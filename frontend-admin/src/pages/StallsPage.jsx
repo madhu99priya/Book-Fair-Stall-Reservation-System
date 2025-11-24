@@ -55,7 +55,6 @@ export default function StallsPage() {
   });
 
   function handleSelect(stall) {
-    // Only allow selection if the stall is not already booked
     if (stall.booked) return;
 
     setSelected((prev) =>

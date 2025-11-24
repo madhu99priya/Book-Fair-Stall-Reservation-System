@@ -37,6 +37,9 @@ public class StallService {
         Stall stall = getStallById(id);
         stall.setName(updatedStall.getName());
         stall.setPrice(updatedStall.getPrice());
+        stall.setSize(updatedStall.getSize());
+        stall.setX(updatedStall.getX());
+        stall.setZ(updatedStall.getZ());
         stall.setBooked(updatedStall.isBooked());
         return stallRepository.save(stall);
     }

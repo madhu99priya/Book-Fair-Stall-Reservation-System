@@ -2,6 +2,8 @@ package com.bookfair.backend.controller;
 
 import com.bookfair.backend.model.User;
 import com.bookfair.backend.service.UserService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ public class UserController {
 
     // User registration
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
+    public User registerUser(@Valid @RequestBody User user) {
         return userService.registerUser(user);
     }
     
@@ -36,11 +38,9 @@ public class UserController {
     public ResponseEntity<LoginResponse> adminLogin(@RequestBody LoginRequest request) {
         String token = userService.login(request.email(), request.password());
         User user = userService.getUserByEmail(request.email());
-
         if (user.getRole() != User.Role.ADMIN) {
             return ResponseEntity.status(403).body(null);
         }
-
         return ResponseEntity.ok(new LoginResponse(token, user));
     }
 
@@ -76,15 +76,15 @@ public class UserController {
     // Update current user
     @PutMapping("/me")
     @PreAuthorize("hasAnyRole('ADMIN','EXHIBITOR')")
-    public User updateCurrentUser(@RequestBody User updatedData, Authentication authentication) {
+    public User updateCurrentUser(@Valid @RequestBody User updatedData, Authentication authentication) {
         User currentUser = userService.getUserByEmail(authentication.getName());
-        updatedData.setId(currentUser.getId());  // ensure the correct user is updated
+        updatedData.setId(currentUser.getId()); 
         return userService.updateUser(updatedData);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public User updateUserByAdmin(@PathVariable Long id, @RequestBody User updatedData) {
+    public User updateUserByAdmin(@PathVariable Long id, @Valid @RequestBody User updatedData) {
         updatedData.setId(id);
         return userService.updateUser(updatedData);
     }
@@ -122,4 +122,5 @@ public class UserController {
     record LoginRequest(String email, String password) {}
     record LoginResponse(String token, User user) {}
     record PasswordChangeRequest(String oldPassword, String newPassword) {}
+    record RegisterRequest(String fullName, String email, String password, String confirmPassword, String contactNumber) {}
 }

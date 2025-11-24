@@ -55,7 +55,6 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Add all dev frontend origins you actually use
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:5174"));
@@ -67,12 +66,11 @@ public class SecurityConfig {
                 "Accept",
                 "Origin",
                 "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("Authorization")); // Optional
+        configuration.setExposedHeaders(List.of("Authorization")); 
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L); // Cache preflight for 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Apply to all endpoints
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
@@ -84,18 +82,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Permit preflight requests explicitly
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // Public auth endpoints (choose whichever path your frontend uses)
                         .requestMatchers("/api/auth/**").permitAll()
-                        // If you still use /api/users/login/register keep them too:
                         .requestMatchers("/api/users/login", "/api/users/register", "/api/users/admin/login").permitAll()
-
-                        // Example of allowing public read:
-                        // .requestMatchers(HttpMethod.GET,
-                        // "/api/stalls/**").hasAnyRole("ADMIN","VENDOR")
-
                         .anyRequest().authenticated())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
