@@ -67,14 +67,14 @@ export default function UsersPage() {
   return (
     <div>
       <h1>Users Management</h1>
-      <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+      <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'stretch' }}>
         <input
           type="text"
           placeholder="Search by username or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
-            flex: 1,
+            width: '100%',
             padding: '0.5rem',
             border: '1px solid #e2e8f0',
             borderRadius: '4px',
@@ -94,7 +94,7 @@ export default function UsersPage() {
         >
           <option value="ALL">All Roles</option>
           <option value="ADMIN">Admin</option>
-          <option value="EXHIBITOR">Vendor</option>
+          <option value="EXHIBITOR">Exhibitor</option>
         </select>
       </div>
 
