@@ -1,5 +1,3 @@
-// StallMapScene.js
-
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Text } from "@react-three/drei";
@@ -111,42 +109,6 @@ function Ground() {
   );
 }
 
-function Legend() {
-  const items = [
-    { color: "red", label: "Selected" },
-    { color: "#909091ff", label: "Reserved" },
-    { color: "cyan", label: "Available" },
-  ];
-
-  return (
-    <div style={{
-      position: "absolute",
-      top: 20,
-      right: 20,
-      background: "rgba(0,0,0,0.6)",
-      padding: "10px 15px",
-      borderRadius: "8px",
-      color: "white",
-      fontSize: "0.9rem",
-      zIndex: 10,
-    }}>
-      {items.map((item) => (
-        <div key={item.label} style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
-          <div style={{
-            width: "16px",
-            height: "16px",
-            backgroundColor: item.color,
-            marginRight: "8px",
-            border: "1px solid #fff"
-          }} />
-          <span>{item.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-
 export default function StallMapScene({
   stalls,
   selectedStalls,
@@ -172,7 +134,7 @@ export default function StallMapScene({
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <Legend/>
+      {/* Legend component removed - legend now only appears in the control panel */}
       <Canvas
         gl={{ 
           outputColorSpace: THREE.SRGBColorSpace,
