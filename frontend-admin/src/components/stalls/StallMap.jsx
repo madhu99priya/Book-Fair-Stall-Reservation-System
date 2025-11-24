@@ -23,7 +23,7 @@ export default function StallMap({ stalls, onSelect, selectedIds = [] }) {
       <div className="stall-map">
         {stalls.map((stall) => {
           const isSelected = selectedIds.includes(stall.id);
-          const reserved = stall.booked; // <- booked = true if BOOKED or CONFIRMED
+          const reserved = stall.booked;
           return (
             <div
               key={stall.id}
