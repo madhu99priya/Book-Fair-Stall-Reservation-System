@@ -73,15 +73,25 @@ export function AuthProvider({ children }) {
       body: JSON.stringify({ 
         fullName: form.fullname,
         email: form.email, 
-        password: form.password
+        password: form.password,
+        contactNumber: form.contactNumber
       }),
     });
-    
-    navigate("/login");
-    if (!res.ok) {
-      throw new Error("Registration failed");
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch (err) {
+      data = null;
     }
-  }
+
+    if (!res.ok) {
+      const message = data?.message || `Registration failed (status ${res.status})`;
+      throw new Error(message);
+    }
+
+    return data;
+  };
 
   // logout function
   const logout = () => {

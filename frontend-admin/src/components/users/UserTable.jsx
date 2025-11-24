@@ -4,6 +4,7 @@ export default function UserTable({ users, onRowClick }) {
   const columns = [
     { key: 'id', title: 'ID' },
     { key: 'fullName', title: 'Full Name' },
+    { key: 'contactNumber', title: 'Contact Number'},
     { key: 'email', title: 'Email' },
     {
       key: 'role',

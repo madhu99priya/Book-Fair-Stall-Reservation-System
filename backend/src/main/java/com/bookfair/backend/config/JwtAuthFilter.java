@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        jwt = authHeader.substring(7); // remove "Bearer "
+        jwt = authHeader.substring(7);
 
         try {
             username = jwtService.extractUsername(jwt);
@@ -75,26 +75,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .write("{\"error\":\"TOKEN_EXPIRED\",\"message\":\"JWT token has expired. Please login again.\"}");
             return;
         } catch (MalformedJwtException e) {
-            // Malformed token
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\":\"INVALID_TOKEN\",\"message\":\"JWT token is malformed.\"}");
             return;
         } catch (SignatureException e) {
-            // Invalid signature
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter()
                     .write("{\"error\":\"INVALID_SIGNATURE\",\"message\":\"JWT token signature is invalid.\"}");
             return;
         } catch (UnsupportedJwtException e) {
-            // Unsupported token
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\":\"UNSUPPORTED_TOKEN\",\"message\":\"JWT token is unsupported.\"}");
             return;
         } catch (Exception e) {
-            // Any other exception
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\":\"TOKEN_ERROR\",\"message\":\"Error processing JWT token.\"}");
