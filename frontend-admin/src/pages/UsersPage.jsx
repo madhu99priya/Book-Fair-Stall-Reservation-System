@@ -115,7 +115,7 @@ export default function UsersPage() {
         </>
       )}
 
-      {/* Pass onSave, onDelete, isLoading directly to the modal */}
+      
       <UserDetailsModal
         user={editUser}
         open={!!editUser}
