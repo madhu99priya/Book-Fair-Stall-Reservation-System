@@ -23,9 +23,9 @@ export default function Navbar() {
 
   return (
     <>
-      <header 
+      <header
         className="fixed top-0 left-0 right-0 z-50 w-full px-4 sm:px-6 lg:px-8"
-        style={{ paddingTop : "8px" }}
+        style={{ paddingTop: "8px" }}
       >
         <div className="max-w-7xl mx-auto backdrop-blur-xl border rounded-full bg-black/40 border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.3)]">
           <div className="flex justify-between items-center h-16 px-4 md:px-6">
@@ -44,22 +44,26 @@ export default function Navbar() {
 
             {/* Desktop nav links */}
             <nav className="hidden md:flex items-center space-x-2">
-              <button className={linkClasses} onClick={() => handleNavigation("/")}>
+              <button
+                className={linkClasses}
+                onClick={() => handleNavigation("/reservation")}
+              >
                 Home
               </button>
               {user && (
-                <button className={linkClasses} onClick={() => handleNavigation("/profile")}>
+                <button
+                  className={linkClasses}
+                  onClick={() => handleNavigation("/profile")}
+                >
                   Profile
                 </button>
               )}
               {user && (
-                <button className={linkClasses} onClick={() => handleNavigation("/genre")}>
+                <button
+                  className={linkClasses}
+                  onClick={() => handleNavigation("/genre")}
+                >
                   Genres
-                </button>
-              )}
-              {user && (
-                <button className={linkClasses} onClick={() => handleNavigation("/reservation")}>
-                  Reservation
                 </button>
               )}
               {user ? (
@@ -67,7 +71,10 @@ export default function Navbar() {
                   Logout
                 </button>
               ) : (
-                <button className={linkClasses} onClick={() => handleNavigation("/login")}>
+                <button
+                  className={linkClasses}
+                  onClick={() => handleNavigation("/login")}
+                >
                   Login
                 </button>
               )}
@@ -79,7 +86,11 @@ export default function Navbar() {
               className="md:hidden p-2 rounded-lg text-cyan-300 hover:bg-cyan-500/20 transition-all duration-300 flex-shrink-0"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>

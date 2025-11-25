@@ -1,28 +1,49 @@
 .dt-table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
+  background: transparent !important;
   font-size: 0.9rem;
 }
+
 .dt-table th {
   text-align: left;
-  background: #f1f5f9;
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid #e2e8f0;
+  background: rgba(15, 23, 42, 0.6) !important;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid rgba(14, 165, 233, 0.3);
   font-weight: 600;
+  font-size: 0.75rem;
+  color: #0ea5e9 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
+
 .dt-table td {
-  padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  color: #e2e8f0 !important;
+  font-size: 0.875rem;
 }
+
+.dt-table tbody tr {
+  transition: all 0.15s;
+}
+
 .dt-table tr.clickable {
   cursor: pointer;
 }
-.dt-table tr.clickable:hover {
-  background: #f8fafc;
+
+.dt-table tr.clickable:hover,
+.dt-table tbody tr:hover {
+  background: rgba(14, 165, 233, 0.1) !important;
 }
+
+.dt-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .dt-empty {
   text-align: center;
   padding: 1.5rem;
-  color: #64748b;
+  color: #94a3b8 !important;
+  background: transparent !important;
 }
