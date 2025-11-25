@@ -43,7 +43,7 @@
    - The JWT secret should be a long, random string for security
    - For Supabase users, use the connection pooler URL format
 
-### Running the Application
+### Running the Backend
 
 1. **Install Dependencies and Run**
 
@@ -67,7 +67,95 @@
 - Tables will be automatically created on first run
 - Make sure your database is accessible and credentials are correct
 
-### Troubleshooting
+## Frontend Setup
+
+### Prerequisites
+
+- Node.js 16 or higher
+- npm or yarn package manager
+
+### Frontend-Vendor Setup (Vendor Portal)
+
+1. **Navigate to Frontend-Vendor Directory**
+
+   ```bash
+   cd frontend-vendor
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start Development Server**
+
+   ```bash
+   npm run dev
+   ```
+
+   The vendor portal will be available at `http://localhost:5173`
+
+### Frontend-Admin Setup (Admin Portal)
+
+1. **Navigate to Frontend-Admin Directory**
+
+   ```bash
+   cd frontend-admin
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start Development Server**
+
+   ```bash
+   npm run dev
+   ```
+
+   The admin portal will be available at `http://localhost:5174`
+
+## Running the Complete Application
+
+### Option 1: Manual Setup (Recommended for Development)
+
+1. **Start Backend Server**
+
+   ```bash
+   # Terminal 1
+   cd backend
+   ./mvnw spring-boot:run
+   ```
+
+2. **Start Vendor Frontend**
+
+   ```bash
+   # Terminal 2
+   cd frontend-vendor
+   npm install
+   npm run dev
+   ```
+
+3. **Start Admin Frontend**
+   ```bash
+   # Terminal 3
+   cd frontend-admin
+   npm install
+   npm run dev
+   ```
+
+## Application Access
+
+- **Backend API**: `http://localhost:8081`
+- **Vendor Portal**: `http://localhost:5173`
+- **Admin Portal**: `http://localhost:5174`
+
+## Troubleshooting
+
+### Backend Issues
 
 **Common Issues:**
 
@@ -86,3 +174,50 @@
 3. **Port Already in Use**
    - Change `SERVER_PORT` in `.env` to a different port (e.g., 8082)
    - Or stop any other application using port 8081
+
+### Frontend Issues
+
+**Common Issues:**
+
+1. **Node Modules Installation Fails**
+
+   - Ensure Node.js version 16 or higher is installed
+   - Try clearing npm cache: `npm cache clean --force`
+   - Delete `node_modules` and `package-lock.json`, then run `npm install` again
+
+2. **Port Already in Use**
+
+   - Frontend applications will automatically use the next available port
+   - Or manually specify port: `PORT=5174 npm start`
+
+3. **API Connection Issues**
+
+   - Ensure backend server is running on the correct port
+   - Check if API endpoints in frontend are pointing to correct backend URL
+   - Verify CORS configuration in backend allows frontend domains
+
+### General Tips
+
+- Make sure all three services (backend + both frontends) are running simultaneously
+- Check browser console for any JavaScript errors
+- Verify network requests in browser developer tools
+- Ensure all dependencies are properly installed before starting services
+
+## Project Structure
+
+```
+Book-Fair-Stall-Reservation-System/
+├── backend/                 # Spring Boot backend
+│   ├── src/
+│   ├── pom.xml
+│   └── .env
+├── frontend-vendor/         # React vendor portal
+│   ├── src/
+│   ├── package.json
+│   └── public/
+├── frontend-admin/          # React admin portal
+│   ├── src/
+│   ├── package.json
+│   └── public/
+└── README.md
+```

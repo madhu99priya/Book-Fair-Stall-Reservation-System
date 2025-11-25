@@ -34,7 +34,7 @@ export default function Login() {
           </div>
         )}
 
-        <label className="block mb-2 font-semibold">Username</label>
+        <label className="block mb-2 font-semibold">Email</label>
         <input
           type="text"
           value={username}
